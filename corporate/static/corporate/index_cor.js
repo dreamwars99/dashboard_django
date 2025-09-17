@@ -538,40 +538,104 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
+  // ECharts 인스턴스를 관리하기 위한 헬퍼 함수
+  function getChart(domId) {
+    if (typeof echarts === 'undefined') return null;
+    const el = document.getElementById(domId);
+    if (!el) return null;
+    if (!charts[domId]) {
+      charts[domId] = echarts.init(el, null, { renderer: 'svg' });
+    }
+    return charts[domId];
+  }
+
   // PD 게이지 시각화 옵션: 색상 밴드나 범위를 바꾸려면 이 함수를 조정합니다.
   function updateGauge() {
     const threshold = getPdThreshold(state.risk.grade);
     const pdValue = state.risk.pd;
-    let status;
-    if (pdValue < threshold - 0.05) {
-      status = '승인 권고';
-    } else if (pdValue <= threshold + 0.05) {
-      status = '보류 검토';
-    } else {
-      status = '승인 거절';
+
+    const chart = getChart('pdGauge');
+    if (!chart) {
+      return null;
     }
-    const subtitle = state.risk.grade && state.risk.grade !== '--' ? `현재 등급 ${state.risk.grade}` : '';
-    const options = {
-      title: '부도확률 (PD)',
-      subtitle: subtitle,
-      status: status,
-      valueFontSize: 20,
-      valueOffset: [0, '40%'],
-      animation: { duration: 420, easing: 'cubicOut' },
-      valueFormatter: function (val) {
-        return percentFormat.format(val / 100);
-      },
+
+    function readVar(name, fallback) {
+      const root = document.body || document.documentElement;
+      if (!root) return fallback;
+      const value = getComputedStyle(root).getPropertyValue(name);
+      return value && value.trim() ? value.trim() : fallback;
+    }
+
+    const decisionTone = (function () {
+      if (pdValue < threshold - 0.05) return '#16a34a'; // approve: green
+      if (pdValue <= threshold + 0.05) return '#f59e0b'; // hold: yellow
+      return '#dc2626'; // reject: red
+    })();
+
+    const accent = decisionTone || readVar('--kb-color-accent', '#1b64da');
+    const track = readVar('--kb-color-track', '#dde3f3');
+    const needle = readVar('--kb-color-gauge-needle', '#1f2937');
+    const thresholdColor = '#a0aec0';
+    const title = '부도확률 (PD)';
+
+    const valuePct = clamp(Number(pdValue) * 100, 0, 100);
+    const threshPct = clamp(Number(threshold) * 100, 0, 100);
+
+    const bandWidth = 14;
+    const showValue = true;
+    const valueFormatter = function (val) { return percentFormat.format(val) + '%'; };
+    const valueFontSize = 20;
+    const valueOffset = [0, '40%'];
+    const animationDuration = 420;
+    const animationEasing = 'cubicOut';
+    const pointerWidth = 6;
+
+    const option = {
+      animationDuration: animationDuration,
+      animationDurationUpdate: animationDuration,
+      animationEasing: animationEasing,
+      animationEasingUpdate: animationEasing,
+      title: undefined, // Subtitle removed
+      series: [
+        {
+          name: 'gauge-track', type: 'gauge', startAngle: 220, endAngle: -40, min: 0, max: 100, radius: '100%',
+          progress: { show: true, width: bandWidth, roundCap: true, itemStyle: { color: accent, shadowBlur: 12, shadowColor: 'rgba(15, 23, 42, 0.18)' } },
+          axisLine: { roundCap: true, lineStyle: { width: bandWidth, color: [ [valuePct / 100, accent], [1, track] ] } },
+          pointer: { show: false }, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false }, detail: { show: false },
+          data: [{ value: valuePct }],
+        },
+        {
+          name: 'gauge-pointer', type: 'gauge', startAngle: 220, endAngle: -40, min: 0, max: 100, radius: '100%',
+          axisLine: { lineStyle: { width: 0 } },
+          pointer: { show: true, icon: 'path://M2 -70 L-2 -70 L-6 10 L0 70 L6 10 Z', length: '70%', width: pointerWidth, offsetCenter: [0, '10%'], itemStyle: { color: needle } },
+          anchor: { show: true, showAbove: true, size: 12, itemStyle: { color: needle } },
+          axisTick: { show: false },
+          splitLine: { show: false },
+          axisLabel: { show: false }, // Labels hidden
+          detail: { show: showValue, valueAnimation: true, formatter: valueFormatter, color: '#0f172a', fontSize: valueFontSize, fontWeight: 600, offsetCenter: valueOffset },
+          title: { show: true, offsetCenter: [0, '-30%'], color: 'rgba(55, 65, 81, 0.75)', fontSize: 14, fontWeight: 600, formatter: title },
+          data: [{ value: valuePct }],
+        },
+        {
+          name: 'gauge-threshold', type: 'gauge', startAngle: 220, endAngle: -40, min: 0, max: 100, radius: '100%',
+          axisLine: { lineStyle: { width: 0 } },
+          pointer: { show: threshold !== undefined && threshold !== null, icon: 'path://M-1.5 -60 L1.5 -60 L1.5 10 L-1.5 10 Z', length: '85%', width: 3, offsetCenter: [0, '18%'], itemStyle: { color: thresholdColor } },
+          anchor: { show: false }, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false }, detail: { show: false },
+          data: [{ value: threshPct }],
+        },
+      ],
     };
+
     const rafAvailable = typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function';
     if (rafAvailable) {
       if (gaugeFrame) {
         window.cancelAnimationFrame(gaugeFrame);
       }
       gaugeFrame = window.requestAnimationFrame(function () {
-        KBGauge.render('pdGauge', pdValue, threshold, options);
+        chart.setOption(option, false);
       });
     } else {
-      KBGauge.render('pdGauge', pdValue, threshold, options);
+      chart.setOption(option, false);
     }
   }
   // XAI 탭에 표시할 SHAP/Feature Importance 막대 차트를 갱신합니다.

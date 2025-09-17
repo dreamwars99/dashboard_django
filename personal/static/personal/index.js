@@ -99,16 +99,92 @@ function getChart(domId) {
  * @returns {echarts.ECharts|null} 렌더된 차트.
  */
 function renderApprovalGauge(params) {
-  return KBGauge.render(
-    params.domId,
-    params.value,
-    params.threshold,
+  const chart = getChart(params.domId);
+  if (!chart) {
+    return null;
+  }
+
+  // Helper function to read CSS variables, copied from gauge.js
+  function readVar(name, fallback) {
+    const root = document.body || document.documentElement;
+    if (!root) return fallback;
+    const value = getComputedStyle(root).getPropertyValue(name);
+    return value && value.trim() ? value.trim() : fallback;
+  }
+
+  const opts = {
+    title: params.title || '승인확률',
+    subtitle: '', // Subtitle is explicitly cleared
+    status: params.status,
+  };
+
+  const decisionTone = (function () {
+    switch (opts.status) {
+      case '승인 권고': case '승인': return '#16a34a';
+      case '신중 검토': return '#f59e0b';
+      case '승인 거절': case '거절 권고': return '#dc2626';
+      default: return null;
+    }
+  })();
+
+  const accent = decisionTone || opts.accent || readVar('--kb-color-accent', '#f7b500');
+  const track = opts.track || readVar('--kb-color-track', '#dde3f3');
+  const needle = opts.needle || readVar('--kb-color-gauge-needle', '#1f2937');
+  const thresholdColor = opts.thresholdColor || '#a0aec0';
+  const title = opts.title || '승인 확률';
+  const subtitle = ''; // Subtitle is forced to be empty
+
+  const valuePct = clamp(Number(params.value) * 100, 0, 100);
+  const threshPct = clamp(Number(params.threshold) * 100, 0, 100);
+
+  const bandWidth = 14;
+  const showValue = true;
+  const valueFormatter = function (val) { return Math.round(val) + '%'; };
+  const valueFontSize = 22;
+  const valueOffset = [0, '42%'];
+  const animationDuration = 420;
+  const animationEasing = 'cubicOut';
+  const pointerWidth = 6;
+
+  chart.setOption(
     {
-      title: params.title || '승인확률',
-      subtitle: params.subtitle || '',
-      status: params.status,
+      animationDuration: animationDuration,
+      animationDurationUpdate: animationDuration,
+      animationEasing: animationEasing,
+      animationEasingUpdate: animationEasing,
+      title: undefined, // Subtitle object is removed
+      series: [
+        {
+          name: 'gauge-track', type: 'gauge', startAngle: 220, endAngle: -40, min: 0, max: 100, radius: '100%',
+          progress: { show: true, width: bandWidth, roundCap: true, itemStyle: { color: accent, shadowBlur: 12, shadowColor: 'rgba(15, 23, 42, 0.18)' } },
+          axisLine: { roundCap: true, lineStyle: { width: bandWidth, color: [ [valuePct / 100, accent], [1, track] ] } },
+          pointer: { show: false }, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false }, detail: { show: false },
+          data: [{ value: valuePct }],
+        },
+        {
+          name: 'gauge-pointer', type: 'gauge', startAngle: 220, endAngle: -40, min: 0, max: 100, radius: '100%',
+          axisLine: { lineStyle: { width: 0 } },
+          pointer: { show: true, icon: 'path://M2 -70 L-2 -70 L-6 10 L0 70 L6 10 Z', length: '70%', width: pointerWidth, offsetCenter: [0, '10%'], itemStyle: { color: needle } },
+          anchor: { show: true, showAbove: true, size: 12, itemStyle: { color: needle } },
+          axisTick: { distance: -24, length: 6, splitNumber: 2, lineStyle: { color: 'rgba(99, 102, 241, 0.18)', width: 1 } },
+          splitLine: { length: 12, distance: -24, lineStyle: { width: 2, color: 'rgba(15, 23, 42, 0.2)' } },
+          axisLabel: { show: false }, // Axis labels are hidden
+          detail: { show: showValue, valueAnimation: true, formatter: valueFormatter, color: '#0f172a', fontSize: valueFontSize, fontWeight: 600, offsetCenter: valueOffset },
+          title: { show: true, offsetCenter: [0, '-30%'], color: 'rgba(55, 65, 81, 0.75)', fontSize: 14, fontWeight: 600, formatter: title },
+          data: [{ value: valuePct }],
+        },
+        {
+          name: 'gauge-threshold', type: 'gauge', startAngle: 220, endAngle: -40, min: 0, max: 100, radius: '100%',
+          axisLine: { lineStyle: { width: 0 } },
+          pointer: { show: params.threshold !== undefined && params.threshold !== null, icon: 'path://M-1.5 -60 L1.5 -60 L1.5 10 L-1.5 10 Z', length: '85%', width: 3, offsetCenter: [0, '18%'], itemStyle: { color: thresholdColor } },
+          anchor: { show: false }, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false }, detail: { show: false },
+          data: [{ value: threshPct }],
+        },
+      ],
     },
+    false,
   );
+  return chart;
 }
 
 /**
@@ -754,7 +830,7 @@ function applyState(partial) {
   const update = partial || {};
   Object.assign(state, update);
   const decision = getDecisionMeta(state.pHat, state.theta);
-  renderApprovalGauge({ domId: 'gaugeChart', value: state.pHat, threshold: state.theta, title: '승인확률', subtitle: state.grade ? `현재 등급 ${state.grade}` : '', status: decision.text });
+  renderApprovalGauge({ domId: 'gaugeChart', value: state.pHat, threshold: state.theta, title: '승인확률', subtitle: '', status: decision.text });
   updateSummary({ pHat: state.pHat, theta: state.theta, limit: state.limit, reqAmount: state.reqAmount, grade: state.grade });
 }
 
