@@ -1,4 +1,0 @@
-﻿#!/bin/sh
-python scripts/dump_structure.py >/dev/null 2>&1 || python3 scripts/dump_structure.py >/dev/null 2>&1
-git add repo_structure.txt
-
