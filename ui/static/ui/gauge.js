@@ -33,7 +33,7 @@
     return instances[domId];
   }
 
-  function render(domId, value, threshold, options) {
+  function render(domId, value, options) {
     const chart = ensureInstance(domId);
     if (!chart) {
       return null;
@@ -41,22 +41,27 @@
     const opts = options || {};
 
     const decisionTone = (function () {
-      const diff = Number(value) - Number(threshold);
-      if (!Number.isFinite(diff)) return null;
-      if (diff >= 0.05) return '#16a34a'; // approve
-      if (diff >= -0.05) return '#f59e0b'; // review
-      return '#dc2626'; // reject
+      switch (opts.status) {
+        case '승인 권고':
+        case '승인':
+          return '#16a34a'; // green
+        case '신중 검토':
+          return '#f59e0b'; // yellow
+        case '승인 거절':
+        case '거절 권고':
+          return '#dc2626'; // red
+        default:
+          return null;
+      }
     })();
 
-    const accent = (opts.accent !== undefined ? opts.accent : decisionTone) || readVar('--kb-color-accent', '#f7b500');
+    const accent = decisionTone || opts.accent || readVar('--kb-color-accent', '#f7b500');
     const track = opts.track || readVar('--kb-color-track', '#dde3f3');
     const needle = opts.needle || readVar('--kb-color-gauge-needle', '#1f2937');
-    const thresholdColor = opts.thresholdColor || readVar('--kb-color-gauge-threshold', '#ef4444');
     const title = opts.title || '승인 확률';
     const subtitle = opts.subtitle || '';
 
     const valuePct = clamp(Number(value) * 100, 0, 100);
-    const threshPct = clamp(Number(threshold) * 100, 0, 100);
 
     chart.setOption(
       {
@@ -166,37 +171,6 @@
               formatter: title,
             },
             data: [{ value: valuePct }],
-          },
-          {
-            name: 'gauge-threshold',
-            type: 'gauge',
-            startAngle: 220,
-            endAngle: -40,
-            min: 0,
-            max: 100,
-            radius: '100%',
-            axisLine: { lineStyle: { width: 0 } },
-            pointer: {
-              show: true,
-              length: '75%',
-              width: 4,
-              offsetCenter: [0, '-12%'],
-              icon: 'path://M0 -9 L8 0 L0 9 Z',
-              itemStyle: { color: thresholdColor },
-            },
-            detail: {
-              show: true,
-              formatter: function () {
-                return Math.round(threshPct) + '%';
-              },
-              color: thresholdColor,
-              fontSize: 12,
-              offsetCenter: [0, '-68%'],
-            },
-            axisTick: { show: false },
-            splitLine: { show: false },
-            axisLabel: { show: false },
-            data: [{ value: threshPct }],
           },
         ],
       },

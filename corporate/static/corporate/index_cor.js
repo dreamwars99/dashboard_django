@@ -540,9 +540,20 @@ const PD_THRESHOLD_BY_GRADE = {
   // PD 게이지 시각화 옵션: 색상 밴드나 범위를 바꾸려면 이 함수를 조정합니다.
   function updateGauge() {
     const threshold = getPdThreshold(state.risk.grade);
-    KBGauge.render('pdGauge', state.risk.pd, threshold, {
+    const diff = state.risk.pd - threshold;
+    let status;
+    if (state.risk.pd < threshold - 0.05) {
+      status = '승인 권고';
+    } else if (state.risk.pd <= threshold + 0.05) {
+      status = '신중 검토';
+    } else {
+      status = '승인 거절';
+    }
+
+    KBGauge.render('pdGauge', state.risk.pd, {
       title: '부도확률 (PD)',
       subtitle: state.risk.grade ? `현재 등급 ${state.risk.grade}` : '',
+      status: status,
     });
   }
 
