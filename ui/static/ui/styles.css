@@ -1,0 +1,132 @@
+﻿/* Shared ??layout grid structure */
+.kb-main {
+  padding: var(--kb-spacing-300) var(--kb-spacing-400) var(--kb-spacing-400);
+}
+
+.kb-grid {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) 340px;
+  gap: var(--kb-spacing-300);
+  align-items: start;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.kb-grid__left,
+.kb-grid__center,
+.kb-grid__right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-spacing-300);
+}
+
+.kb-grid__left,
+.kb-grid__right {
+  position: sticky;
+  top: calc(var(--kb-spacing-250) + 72px);
+}
+
+.kb-card-group {
+  display: grid;
+  gap: var(--kb-spacing-250);
+}
+
+.kb-grid-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--kb-spacing-300);
+  margin-top: var(--kb-spacing-300);
+}
+
+.kb-grid-row.kb-grid-row--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.kb-grid-row.kb-grid-row--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 1400px) {
+  .kb-grid {
+    grid-template-columns: 280px minmax(0, 1fr) 300px;
+    gap: var(--kb-spacing-250);
+  }
+}
+
+@media (max-width: 1280px) {
+  .kb-grid {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .kb-grid__right {
+    position: static;
+    order: 3;
+    grid-column: 1 / -1;
+  }
+
+  .kb-grid-row,
+  .kb-grid-row.kb-grid-row--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .kb-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kb-grid__left,
+  .kb-grid__center,
+  .kb-grid__right {
+    position: static;
+    order: unset;
+  }
+
+  .kb-grid-row,
+  .kb-grid-row.kb-grid-row--two,
+  .kb-grid-row.kb-grid-row--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .kb-main {
+    padding: var(--kb-spacing-200) var(--kb-spacing-200) var(--kb-spacing-300);
+  }
+
+  .kb-card {
+    padding: var(--kb-spacing-250);
+  }
+}
+
+.kb-panel {
+  padding: var(--kb-spacing-250);
+}
+
+.kb-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-spacing-100);
+  margin-bottom: var(--kb-spacing-300);
+}
+
+.kb-header__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.kb-header__subtitle {
+  margin: 0;
+  color: var(--kb-text-muted);
+  font-size: 14px;
+}
+
+.kb-footer {
+  margin-top: var(--kb-spacing-300);
+  text-align: center;
+  color: var(--kb-text-muted);
+  font-size: 13px;
+}
+
+

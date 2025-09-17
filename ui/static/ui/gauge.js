@@ -39,7 +39,16 @@
       return null;
     }
     const opts = options || {};
-    const accent = opts.accent || readVar('--kb-color-accent', '#f7b500');
+
+    const decisionTone = (function () {
+      const diff = Number(value) - Number(threshold);
+      if (!Number.isFinite(diff)) return null;
+      if (diff >= 0.05) return '#16a34a'; // approve
+      if (diff >= -0.05) return '#f59e0b'; // review
+      return '#dc2626'; // reject
+    })();
+
+    const accent = (opts.accent !== undefined ? opts.accent : decisionTone) || readVar('--kb-color-accent', '#f7b500');
     const track = opts.track || readVar('--kb-color-track', '#dde3f3');
     const needle = opts.needle || readVar('--kb-color-gauge-needle', '#1f2937');
     const thresholdColor = opts.thresholdColor || readVar('--kb-color-gauge-threshold', '#ef4444');
@@ -142,7 +151,7 @@
             },
             detail: {
               valueAnimation: true,
-              formatter: '{value}%',
+              formatter: function (val) { return Math.round(val) + '%'; },
               color: '#0f172a',
               fontSize: 28,
               fontWeight: 700,
@@ -178,7 +187,7 @@
             detail: {
               show: true,
               formatter: function () {
-                return '임계치 ' + Math.round(threshPct) + '%';
+                return Math.round(threshPct) + '%';
               },
               color: thresholdColor,
               fontSize: 12,

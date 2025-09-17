@@ -38,15 +38,6 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 .kb-footer { padding: var(--space-4); color: var(--kb-muted); font-size: 12px; text-align: center; }
 
 /* 3) 그리드 레이아웃(좌 350 / 중 auto / 우 300) */
-.kb-grid {
-  display: grid;
-  grid-template-columns: 320px 1fr 300px;
-  gap: var(--space-4);
-  max-width: 1600px;
-  padding: var(--space-4);
-  margin: 0 auto;
-}
-
 /* 4) 카드 공통 */
 .card{
   background: var(--kb-card);
@@ -286,16 +277,8 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 .kb-badge--high{ background:#f8d7da; color: var(--kb-red); }
 
 /* 10) 카드 그리드(중앙 내부 섹션) */
-.kb-grid-row{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  margin-top: var(--space-4);
-}
 .card--wide{ grid-column: span 2; }
 
-.kb-grid-row.kb-grid-row--two{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.kb-grid-row.kb-grid-row--single{ grid-template-columns: minmax(0, 1fr); }
 .kb-memo{ display: grid; gap: var(--space-3); }
 .kb-memo__item{ border: 1px dashed var(--kb-border); border-radius: 10px; padding: 14px 16px; background: #fdfdfd; }
 .kb-memo__label{ display: block; font-size: 12px; color: var(--kb-muted); margin-bottom: 6px; }
@@ -320,17 +303,13 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 
 /* 12) 반응형 */
 @media (max-width: 1280px){
-  .kb-grid{ grid-template-columns: 320px 1fr 0px; }
   .kb-panel--right{ display:none; }
 }
 @media (max-width: 960px){
-  .kb-grid{ grid-template-columns: 1fr; }
   .kb-panel--left{ position: static; order: 1; }
   .kb-panel--center{ order: 2; }
   .kb-summary{ grid-template-columns: 1fr; grid-template-areas: 'gauge' 'metrics' 'risk' 'whatif'; }
   .kb-summary__risk .chart-frame{ min-height: 100px; }
-  .kb-grid-row{ grid-template-columns: 1fr; }
-  .kb-grid-row.kb-grid-row--two{ grid-template-columns: 1fr; }
   .kb-trend-summary{ grid-template-columns: 1fr; }
   .chart-frame--square{ min-height: 260px; }
 }

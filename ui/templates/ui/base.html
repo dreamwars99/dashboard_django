@@ -1,55 +1,48 @@
-﻿{% load static %}
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}KB 여신 심사 대시보드{% endblock %}</title>
+  <title>KB 여신 심사 대시보드</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'ui/tokens.css' %}">
-  {% block extra_css %}{% endblock %}
-  <link rel="stylesheet" href="{% static 'ui/layout.css' %}">
+  <link rel="stylesheet" href="{% static 'ui/styles.css' %}">
   <link rel="stylesheet" href="{% static 'ui/panel.css' %}">
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
   <script src="{% static 'ui/gauge.js' %}" defer></script>
+  {% block extra_css %}{% endblock %}
   {% block head_scripts %}{% endblock %}
 </head>
 <body class="theme-{{ theme|default:'personal' }}">
-  <header class="kb-site-header" role="banner">
+  <header class="kb-header kb-panel kb-card" role="banner">
     {% block header %}
-    <div class="kb-site-header__brand">
-      <span class="kb-site-header__logo" aria-hidden="true">KB</span>
-      <div class="kb-site-header__titles">
-        <h1 class="kb-site-header__title">AI 여신 심사 대시보드</h1>
-        <p class="kb-site-header__subtitle">실시간 심사 지원 · Explainable AI · 운영 가이드</p>
-      </div>
+    <div class="kb-header__titles">
+      <h1 class="kb-header__title">AI 기반 여신 심사 대시보드</h1>
+      <p class="kb-header__subtitle">실시간 심사 지원 · Explainable AI · 운영 가이드</p>
     </div>
     {% endblock %}
   </header>
-  <main class="kb-main" role="main">
-    <div class="kb-grid">
-      <div class="kb-grid__left" role="complementary">
+  <main class="kb-grid">
+    <aside class="kb-grid__left" role="complementary">
+      <div class="kb-panel kb-card">
         {% block left_panel %}{% endblock %}
       </div>
-      <section class="kb-grid__center">
-        <div class="kb-main__section kb-main__section--top">
-          {% block main_top %}{% endblock %}
-        </div>
-        <div class="kb-main__section kb-main__section--mid">
-          {% block main_mid %}{% endblock %}
-        </div>
-        <div class="kb-main__section kb-main__section--bottom">
-          {% block main_bottom %}{% endblock %}
-        </div>
-      </section>
-      <div class="kb-grid__right" role="complementary">
+    </aside>
+    <section class="kb-grid__center">
+      <div class="kb-panel kb-card">
+        {% block main %}{% endblock %}
+      </div>
+    </section>
+    <aside class="kb-grid__right" role="complementary">
+      <div class="kb-panel kb-card">
         {% block right_panel %}{% endblock %}
       </div>
-    </div>
+    </aside>
   </main>
-  <footer class="kb-site-footer" role="contentinfo">
+  <footer class="kb-footer kb-panel kb-card" role="contentinfo">
     {% block footer %}
     <small>ⓒ KB Financial Group · 내부 심사용</small>
     {% endblock %}
