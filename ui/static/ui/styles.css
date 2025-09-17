@@ -1,4 +1,4 @@
-﻿/* Shared ??layout grid structure */
+/* Shared ??layout grid structure */
 .kb-main {
   padding: var(--kb-spacing-300) var(--kb-spacing-400) var(--kb-spacing-400);
 }
@@ -128,5 +128,3 @@
   color: var(--kb-text-muted);
   font-size: 13px;
 }
-
-

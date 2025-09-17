@@ -230,6 +230,7 @@ const PD_THRESHOLD_BY_GRADE = {
     peer: null,
     heatmap: null,
   };
+  let gaugeFrame = null;
 
   // 좌측 입력 패널의 필드와 버튼을 state에 연결하여 값 변경 시 재계산을 트리거합니다.
   function bindInputs() {
@@ -303,7 +304,7 @@ const PD_THRESHOLD_BY_GRADE = {
       { id: 'fxDelta', key: 'fxDelta', formatter: (v) => `${v}%` },
       { id: 'baseRateDelta', key: 'baseRateDelta', formatter: (v) => `${Number(v).toFixed(1)}%p` },
     ];
-    const debouncedApply = debounce(applyWhatIfScenario, 300);
+    const debouncedApply = debounce(applyWhatIfScenario, 150);
     sliderMap.forEach(({ id, key, formatter }) => {
       const slider = $(`#${id}`);
       const chip = $(`#${id}Val`);
@@ -339,10 +340,10 @@ const PD_THRESHOLD_BY_GRADE = {
         state.counters.whatIf += 1;
         state.risk.flags = computePolicyFlags(state.ratios);
         updateSummaryStrip();
-        updateGauge();
         renderWhatIfSummary();
         renderAuditInfo();
         updateDecisionEvidence();
+        updateGauge();
       })
       .catch((error) => {
         console.error(error);
@@ -441,7 +442,6 @@ const PD_THRESHOLD_BY_GRADE = {
 
     renderAutoMetrics();
     updateSummaryStrip();
-    updateGauge();
     renderWhatIfSummary();
     updateShapAndFI();
     updateRadar();
@@ -451,6 +451,7 @@ const PD_THRESHOLD_BY_GRADE = {
     renderCollateral();
     renderAuditInfo();
     updateDecisionEvidence();
+    updateGauge();
   }
 
   // 좌측 하단 KPI 카드에 자동 계산 결과를 출력합니다.
@@ -540,23 +541,39 @@ const PD_THRESHOLD_BY_GRADE = {
   // PD 게이지 시각화 옵션: 색상 밴드나 범위를 바꾸려면 이 함수를 조정합니다.
   function updateGauge() {
     const threshold = getPdThreshold(state.risk.grade);
-    const diff = state.risk.pd - threshold;
+    const pdValue = state.risk.pd;
     let status;
-    if (state.risk.pd < threshold - 0.05) {
+    if (pdValue < threshold - 0.05) {
       status = '승인 권고';
-    } else if (state.risk.pd <= threshold + 0.05) {
-      status = '신중 검토';
+    } else if (pdValue <= threshold + 0.05) {
+      status = '보류 검토';
     } else {
       status = '승인 거절';
     }
-
-    KBGauge.render('pdGauge', state.risk.pd, {
+    const subtitle = state.risk.grade && state.risk.grade !== '--' ? `현재 등급 ${state.risk.grade}` : '';
+    const options = {
       title: '부도확률 (PD)',
-      subtitle: state.risk.grade ? `현재 등급 ${state.risk.grade}` : '',
+      subtitle: subtitle,
       status: status,
-    });
+      valueFontSize: 20,
+      valueOffset: [0, '40%'],
+      animation: { duration: 420, easing: 'cubicOut' },
+      valueFormatter: function (val) {
+        return percentFormat.format(val / 100);
+      },
+    };
+    const rafAvailable = typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function';
+    if (rafAvailable) {
+      if (gaugeFrame) {
+        window.cancelAnimationFrame(gaugeFrame);
+      }
+      gaugeFrame = window.requestAnimationFrame(function () {
+        KBGauge.render('pdGauge', pdValue, threshold, options);
+      });
+    } else {
+      KBGauge.render('pdGauge', pdValue, threshold, options);
+    }
   }
-
   // XAI 탭에 표시할 SHAP/Feature Importance 막대 차트를 갱신합니다.
   function updateShapAndFI() {
     const shapItems = ensureItems(state.shap, DEFAULT_SHAP_ITEMS);

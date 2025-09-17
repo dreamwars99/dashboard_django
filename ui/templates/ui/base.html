@@ -14,6 +14,21 @@
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
   <script src="{% static 'ui/gauge.js' %}" defer></script>
   {% block extra_css %}{% endblock %}
+  <style>
+    /* Overrides for floating effect and scrolling */
+    .kb-card,
+    .kb-card:hover {
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    .kb-grid__left,
+    .kb-grid__right {
+      /* 100vh - (header height + top/bottom padding) */
+      height: calc(100vh - 72px - 20px - 24px);
+      overflow-y: auto;
+    }
+  </style>
   {% block head_scripts %}{% endblock %}
 </head>
 <body class="theme-{{ theme|default:'personal' }}">

@@ -388,3 +388,22 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 @media (max-width: 960px){
   .whatif-grid{ grid-template-columns: 1fr; }
 }
+
+/* Layout overrides: disable sticky columns and give left panel its own scroll */
+@media (min-width: 961px) {
+  .theme-personal .kb-grid__left,
+  .theme-personal .kb-grid__right {
+    position: static;
+    top: auto;
+  }
+
+  .theme-personal .kb-grid__left {
+    min-height: 0;
+  }
+
+  .theme-personal .kb-grid__left .kb-panel {
+    max-height: calc(100vh - 2 * var(--kb-spacing-400));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}

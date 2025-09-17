@@ -93,6 +93,7 @@ function getChart(domId) {
  * @param {Object} params - 게이지 설정값.
  * @param {string} params.domId - 차트 DOM ID.
  * @param {number} params.value - 승인 확률(0~1).
+ * @param {number} params.threshold - 임계값 θ(0~1).
  * @param {string} params.status - 승인 상태 텍스트.
  * @param {string} [params.title='승인확률'] - 접근성용 제목.
  * @returns {echarts.ECharts|null} 렌더된 차트.
@@ -101,6 +102,7 @@ function renderApprovalGauge(params) {
   return KBGauge.render(
     params.domId,
     params.value,
+    params.threshold,
     {
       title: params.title || '승인확률',
       subtitle: params.subtitle || '',
@@ -752,7 +754,7 @@ function applyState(partial) {
   const update = partial || {};
   Object.assign(state, update);
   const decision = getDecisionMeta(state.pHat, state.theta);
-  renderApprovalGauge({ domId: 'gaugeChart', value: state.pHat, title: '승인확률', subtitle: state.grade ? `현재 등급 ${state.grade}` : '', status: decision.text });
+  renderApprovalGauge({ domId: 'gaugeChart', value: state.pHat, threshold: state.theta, title: '승인확률', subtitle: state.grade ? `현재 등급 ${state.grade}` : '', status: decision.text });
   updateSummary({ pHat: state.pHat, theta: state.theta, limit: state.limit, reqAmount: state.reqAmount, grade: state.grade });
 }
 

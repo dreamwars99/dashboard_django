@@ -1,4 +1,4 @@
-﻿(function (global) {
+(function (global) {
   const instances = {};
 
   function clamp(value, min, max) {
@@ -33,7 +33,7 @@
     return instances[domId];
   }
 
-  function render(domId, value, options) {
+  function render(domId, value, threshold, options) {
     const chart = ensureInstance(domId);
     if (!chart) {
       return null;
@@ -58,13 +58,32 @@
     const accent = decisionTone || opts.accent || readVar('--kb-color-accent', '#f7b500');
     const track = opts.track || readVar('--kb-color-track', '#dde3f3');
     const needle = opts.needle || readVar('--kb-color-gauge-needle', '#1f2937');
+    const thresholdColor = opts.thresholdColor || '#a0aec0'; // gray-400
     const title = opts.title || '승인 확률';
     const subtitle = opts.subtitle || '';
 
     const valuePct = clamp(Number(value) * 100, 0, 100);
+    const threshPct = clamp(Number(threshold) * 100, 0, 100);
+
+    const bandWidth = typeof opts.bandWidth === 'number' ? opts.bandWidth : 14;
+    const showValue = opts.showValue !== false;
+    const valueFormatter =
+      typeof opts.valueFormatter === 'function'
+        ? opts.valueFormatter
+        : function (val) { return Math.round(val) + '%'; };
+    const valueFontSize = typeof opts.valueFontSize === 'number' ? opts.valueFontSize : 22;
+    const valueOffset = Array.isArray(opts.valueOffset) ? opts.valueOffset : [0, '42%'];
+    const animation = opts.animation || {};
+    const animationDuration = Number.isFinite(animation.duration) ? animation.duration : 420;
+    const animationEasing = animation.easing || 'cubicOut';
+    const pointerWidth = typeof opts.pointerWidth === 'number' ? opts.pointerWidth : 6;
 
     chart.setOption(
       {
+        animationDuration: animationDuration,
+        animationDurationUpdate: animationDuration,
+        animationEasing: animationEasing,
+        animationEasingUpdate: animationEasing,
         title: subtitle
           ? {
               text: subtitle,
@@ -88,7 +107,7 @@
             radius: '100%',
             progress: {
               show: true,
-              width: 16,
+              width: bandWidth,
               roundCap: true,
               itemStyle: {
                 color: accent,
@@ -99,7 +118,7 @@
             axisLine: {
               roundCap: true,
               lineStyle: {
-                width: 16,
+                width: bandWidth,
                 color: [
                   [valuePct / 100, accent],
                   [1, track],
@@ -126,7 +145,7 @@
               show: true,
               icon: 'path://M2 -70 L-2 -70 L-6 10 L0 70 L6 10 Z',
               length: '70%',
-              width: 6,
+              width: pointerWidth,
               offsetCenter: [0, '10%'],
               itemStyle: {
                 color: needle,
@@ -155,12 +174,13 @@
               fontSize: 12,
             },
             detail: {
+              show: showValue,
               valueAnimation: true,
-              formatter: function (val) { return Math.round(val) + '%'; },
+              formatter: valueFormatter,
               color: '#0f172a',
-              fontSize: 28,
-              fontWeight: 700,
-              offsetCenter: [0, '46%'],
+              fontSize: valueFontSize,
+              fontWeight: 600,
+              offsetCenter: valueOffset,
             },
             title: {
               show: true,
@@ -172,9 +192,37 @@
             },
             data: [{ value: valuePct }],
           },
+          {
+            name: 'gauge-threshold',
+            type: 'gauge',
+            startAngle: 220,
+            endAngle: -40,
+            min: 0,
+            max: 100,
+            radius: '100%',
+            axisLine: { lineStyle: { width: 0 } },
+            pointer: {
+              show: threshold !== undefined && threshold !== null,
+              icon: 'path://M-1.5 -60 L1.5 -60 L1.5 10 L-1.5 10 Z',
+              length: '85%',
+              width: 3,
+              offsetCenter: [0, '18%'],
+              itemStyle: {
+                color: thresholdColor,
+              },
+            },
+            anchor: {
+              show: false,
+            },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            detail: { show: false },
+            data: [{ value: threshPct }],
+          },
         ],
       },
-      true,
+      false,
     );
     return chart;
   }
