@@ -1,4 +1,4 @@
-// CSRF 토큰 얻기(장고 4.2)
+// CSRF ?�큰 ?�기(?�고 4.2)
 function getCookie(name) {
   const value = document.cookie.match('(^|;)\s*' + name + '\s*=\s*([^;]+)');
   return value ? value.pop() : '';
@@ -6,7 +6,7 @@ function getCookie(name) {
 const CSRF_TOKEN = getCookie('csrftoken');
 
 (() => {
-  // 대시보드 전역을 초기화하는 즉시 실행 함수로 좌측 입력, 중앙 차트, 우측 결재 보조를 하나의 흐름으로 묶습니다.
+  // ?�?�보???�역??초기?�하??즉시 ?�행 ?�수�?좌측 ?�력, 중앙 차트, ?�측 결재 보조�??�나???�름?�로 묶습?�다.
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const setText = (sel, text) => {
@@ -23,7 +23,7 @@ const CSRF_TOKEN = getCookie('csrftoken');
       timer = setTimeout(() => fn(...args), wait);
     };
   };
-  const fmtAmount = (value, suffix = '억원') => {
+  const fmtAmount = (value, suffix = '?�원') => {
     if (!Number.isFinite(value)) return '-';
     return `${numberFormat.format(Math.round(value))}${suffix}`;
   };
@@ -81,25 +81,25 @@ const PD_THRESHOLD_BY_GRADE = {
   };
 
   const FEATURE_LABELS = {
-    'Net sales': '매출액',
-    Sales: '매출액',
-    COGS: '매출원가',
-    'Depreciation & amortization': '감가상각비',
-    EBIT: '영업이익',
-    'Net Income': '당기순이익',
-    Inventory: '재고자산',
+    'Net sales': '매출??,
+    Sales: '매출??,
+    COGS: '매출?��?',
+    'Depreciation & amortization': '감�??�각�?,
+    EBIT: '?�업?�익',
+    'Net Income': '?�기?�이??,
+    Inventory: '?�고?�산',
     'Total Receivables': '매출채권',
-    'Current assets': '유동자산',
-    'Total Current Liabilities': '유동부채',
-    'Total Long-term debt': '장기차입금',
-    'Retained Earnings': '이익잉여금',
-    'Market value': '시가총액',
-    Altman_Z: '알트만 Z-Score',
-    Olson_O: '올슨 O-Score',
+    'Current assets': '?�동?�산',
+    'Total Current Liabilities': '?�동부�?,
+    'Total Long-term debt': '?�기차입�?,
+    'Retained Earnings': '?�익?�여�?,
+    'Market value': '?��?총액',
+    Altman_Z: '?�트�?Z-Score',
+    Olson_O: '?�슨 O-Score',
     DSCR: 'DSCR',
   };
 
-  const DEFAULT_DELTAS = ['PD 변화: 0%p', '등급 변화: 없음', '권고 한도: 변화 없음'];
+  const DEFAULT_DELTAS = ['PD 변?? 0%p', '?�급 변?? ?�음', '권고 ?�도: 변???�음'];
   const DEFAULT_SHAP_ITEMS = [
     { name: 'Retained Earnings', value: -0.18 },
     { name: 'Debt to Asset', value: 0.14 },
@@ -115,8 +115,8 @@ const PD_THRESHOLD_BY_GRADE = {
     { name: 'Net Income', value: 46 },
   ];
   const DEFAULT_COLLATERAL_ITEMS = [
-    { type: '부동산', value: 320, ltv: 58 },
-    { type: '설비자산', value: 120, ltv: 65 },
+    { type: '부?�산', value: 320, ltv: 58 },
+    { type: '?�비?�산', value: 120, ltv: 65 },
   ];
 
   const ensureItems = (value, fallback) => (value && value.length ? value : fallback);
@@ -161,7 +161,7 @@ const PD_THRESHOLD_BY_GRADE = {
   };
 
 
-  // 입력, 계산, 시나리오 결과를 보관하는 단일 상태 컨테이너로 모든 렌더링 함수가 참조합니다.
+  // ?�력, 계산, ?�나리오 결과�?보�??�는 ?�일 ?�태 컨테?�너�?모든 ?�더�??�수가 참조?�니??
   const state = {
     meta: {
       companyName: '',
@@ -221,7 +221,7 @@ const PD_THRESHOLD_BY_GRADE = {
     modelVersion: '-',
   };
 
-  // HTML 차트 컨테이너 id와 매칭되는 ECharts 인스턴스를 캐시합니다.
+  // HTML 차트 컨테?�너 id?� 매칭?�는 ECharts ?�스?�스�?캐시?�니??
   const charts = {
     shap: null,
     fi: null,
@@ -232,7 +232,7 @@ const PD_THRESHOLD_BY_GRADE = {
   };
   let gaugeFrame = null;
 
-  // 좌측 입력 패널의 필드와 버튼을 state에 연결하여 값 변경 시 재계산을 트리거합니다.
+  // 좌측 ?�력 ?�널???�드?� 버튼??state???�결?�여 �?변�????�계?�을 ?�리거합?�다.
   function bindInputs() {
     ['companyName', 'regNo', 'industry'].forEach((id) => {
       const el = $(`#${id}`);
@@ -260,7 +260,7 @@ const PD_THRESHOLD_BY_GRADE = {
           const value = parseFloat(el.value);
           if (Number.isFinite(value) && value >= 0) {
             if (id === 'cogs' && state.fin.netSales && value > state.fin.netSales) {
-              showToast('매출원가는 매출액을 초과할 수 없습니다.', 'warn');
+              showToast('매출?��???매출?�을 초과?????�습?�다.', 'warn');
               el.value = state.fin.cogs;
               return;
             }
@@ -268,7 +268,7 @@ const PD_THRESHOLD_BY_GRADE = {
             bumpInputCounter();
             recalcAndRender();
           } else {
-            showToast('음수는 입력할 수 없습니다.', 'warn');
+            showToast('?�수???�력?????�습?�다.', 'warn');
             el.value = state.fin[id];
           }
         }),
@@ -285,16 +285,16 @@ const PD_THRESHOLD_BY_GRADE = {
           state.shap = data.shap || [];
           state.fi = data.fi || [];
           recalcAndRender();
-          showToast('기업 데이터를 불러왔습니다.', 'success');
+          showToast('기업 ?�이?��? 불러?�습?�다.', 'success');
         } catch (error) {
           console.error(error);
-          showToast('데이터 불러오기에 실패했습니다.', 'error');
+          showToast('?�이??불러?�기???�패?�습?�다.', 'error');
         }
       });
     }
   }
 
-  // 중앙 What-if 카드의 슬라이더와 토글을 state.scenario와 동기화합니다.
+  // 중앙 What-if 카드???�라?�더?� ?��???state.scenario?� ?�기?�합?�다.
   function bindWhatIfControls() {
     const sliderMap = [
       { id: 'revDelta', key: 'revDelta', formatter: (v) => `${v}%` },
@@ -328,8 +328,32 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // 슬라이더 조정 시 postWhatIfMock 응답을 받아 중앙 KPI와 우측 로그를 갱신합니다.
-  function applyWhatIfScenario() {
+  // ?�라?�더 조정 ??postWhatIfMock ?�답??받아 중앙 KPI?� ?�측 로그�?갱신?�니??
+  function fetchCorporatePHat(payload) {
+    return fetch('/api/predict/corporate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': CSRF_TOKEN,
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch corporate probability');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data && typeof data.p_hat === 'number') {
+          return clamp(data.p_hat, 0, 1);
+        }
+        if (data && typeof data.model_raw === 'number') {
+          return clamp(1 - data.model_raw, 0, 1);
+        }
+        throw new Error('Malformed corporate prediction response');
+      });
+  }\n  function applyWhatIfScenario() {
     postWhatIfMock(state.meta, state.scenario, state.fin, state.risk)
       .then((response) => {
         state.risk.pd = response.pd_new;
@@ -347,11 +371,11 @@ const PD_THRESHOLD_BY_GRADE = {
       })
       .catch((error) => {
         console.error(error);
-        showToast('What-if 적용 중 오류가 발생했습니다.', 'error');
+        showToast('What-if ?�용 �??�류가 발생?�습?�다.', 'error');
       });
   }
 
-  // 손익/재무 입력을 비율로 환산해 좌측 지표와 레이더 차트에서 사용합니다.
+  // ?�익/?�무 ?�력??비율�??�산??좌측 지?��? ?�이??차트?�서 ?�용?�니??
   function computeRatios(fin) {
     const gp = Math.max(0, fin.netSales - fin.cogs);
     const gpm = fin.netSales > 0 ? gp / fin.netSales : 0;
@@ -384,7 +408,7 @@ const PD_THRESHOLD_BY_GRADE = {
     return { gp, gpm, npm, cr, qr, dar, roa, altman, olson };
   }
 
-  // 간이 PD 모델: 비율과 부채 수준을 조합해 위험도를 계산합니다.
+  // 간이 PD 모델: 비율�?부�??��???조합???�험?��? 계산?�니??
   function computePD(fin, ratios) {
     const z =
       0.0007 * fin.ltDebt -
@@ -419,17 +443,17 @@ const PD_THRESHOLD_BY_GRADE = {
     return { limit, rate };
   }
 
-  // 정책 임계값과 비교해 우측 정책 경고 태그 목록을 생성합니다.
+  // ?�책 ?�계값과 비교???�측 ?�책 경고 ?�그 목록???�성?�니??
   function computePolicyFlags(ratios) {
     const flags = [];
-    if (ratios.cr < 1) flags.push({ text: '유동비율 < 1.0', kind: 'danger' });
-    if (ratios.dar > 0.6) flags.push({ text: '부채/자산 > 60%', kind: 'warn' });
-    if (ratios.olson > 1.0) flags.push({ text: '올슨 O-Score 경고', kind: 'warn' });
-    if (state.meta.industry && ratios.dar > 0.55) flags.push({ text: '업종 한도 근접', kind: 'info' });
+    if (ratios.cr < 1) flags.push({ text: '?�동비율 < 1.0', kind: 'danger' });
+    if (ratios.dar > 0.6) flags.push({ text: '부�??�산 > 60%', kind: 'warn' });
+    if (ratios.olson > 1.0) flags.push({ text: '?�슨 O-Score 경고', kind: 'warn' });
+    if (state.meta.industry && ratios.dar > 0.55) flags.push({ text: '?�종 ?�도 근접', kind: 'info' });
     return flags;
   }
 
-  // 좌측 입력값이 바뀔 때마다 호출되어 모든 파생 데이터를 재계산하고 시각화를 다시 그립니다.
+  // 좌측 ?�력값이 바�??�마???�출?�어 모든 ?�생 ?�이?��? ?�계?�하�??�각?��? ?�시 그립?�다.
   function recalcAndRender() {
     state.ratios = computeRatios(state.fin);
     state.risk.pd = computePD(state.fin, state.ratios);
@@ -437,7 +461,7 @@ const PD_THRESHOLD_BY_GRADE = {
     const suggestion = suggestLimitAndRate(state.risk.pd, state.fin);
     state.risk.limit = suggestion.limit;
     state.risk.rate = suggestion.rate;
-    state.risk.covenants = ['재무제표 제출', 'DSCR ≥ 1.2'];
+    state.risk.covenants = ['?�무?�표 ?�출', 'DSCR ??1.2'];
     state.risk.flags = computePolicyFlags(state.ratios);
 
     renderAutoMetrics();
@@ -454,7 +478,7 @@ const PD_THRESHOLD_BY_GRADE = {
     updateGauge();
   }
 
-  // 좌측 하단 KPI 카드에 자동 계산 결과를 출력합니다.
+  // 좌측 ?�단 KPI 카드???�동 계산 결과�?출력?�니??
   function renderAutoMetrics() {
     [
       ['#gp', fmtAmount(state.ratios.gp)],
@@ -491,14 +515,14 @@ const PD_THRESHOLD_BY_GRADE = {
     }
     const status = rule(value);
     badge.className = `metric-badge metric-badge--${status}`;
-    badge.textContent = status === 'good' ? '양호' : status === 'warn' ? '주의' : '위험';
+    badge.textContent = status === 'good' ? '?�호' : status === 'warn' ? '주의' : '?�험';
   }
 
-  // 메인 상단 요약 카드 수치와 등급 뱃지, 정책 플래그를 갱신합니다.
+  // 메인 ?�단 ?�약 카드 ?�치?� ?�급 뱃�?, ?�책 ?�래그�? 갱신?�니??
   function updateSummaryStrip() {
     setText('#summaryLimit', fmtAmount(state.risk.limit));
     setText('#summaryRate', `${state.risk.rate.toFixed(2)}%`);
-    setText('#summaryCovenant', `${state.risk.covenants.length}건`);
+    setText('#summaryCovenant', `${state.risk.covenants.length}�?);
     const gradeBadge = $('#gradeBadge');
     if (gradeBadge) {
       gradeBadge.textContent = state.risk.grade;
@@ -520,14 +544,14 @@ const PD_THRESHOLD_BY_GRADE = {
         () => {
           const span = document.createElement('span');
           span.className = 'flag info';
-          span.textContent = '정책 위반 없음';
+          span.textContent = '?�책 ?�반 ?�음';
           return span;
         },
       );
     }
 
   }
-  // What-if 카드 하단 pill 텍스트를 최신 deltasSummary로 갱신합니다.
+  // What-if 카드 ?�단 pill ?�스?��? 최신 deltasSummary�?갱신?�니??
   function renderWhatIfSummary() {
     const items = ensureItems(state.risk.deltasSummary, DEFAULT_DELTAS);
     renderCollection('#whatIfSummary', items, (text) => {
@@ -538,7 +562,7 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // ECharts 인스턴스를 관리하기 위한 헬퍼 함수
+  // ECharts ?�스?�스�?관리하�??�한 ?�퍼 ?�수
   function getChart(domId) {
     if (typeof echarts === 'undefined') return null;
     const el = document.getElementById(domId);
@@ -549,7 +573,7 @@ const PD_THRESHOLD_BY_GRADE = {
     return charts[domId];
   }
 
-  // PD 게이지 시각화 옵션: 색상 밴드나 범위를 바꾸려면 이 함수를 조정합니다.
+  // PD 게이지 ?�각???�션: ?�상 밴드??범위�?바꾸?�면 ???�수�?조정?�니??
   function updateGauge() {
     const threshold = getPdThreshold(state.risk.grade);
     const pdValue = state.risk.pd;
@@ -576,7 +600,7 @@ const PD_THRESHOLD_BY_GRADE = {
     const track = readVar('--kb-color-track', '#dde3f3');
     const needle = readVar('--kb-color-gauge-needle', '#1f2937');
     const thresholdColor = '#a0aec0';
-    const title = '부도확률 (PD)';
+    const title = '부?�확�?(PD)';
 
     const valuePct = clamp(Number(pdValue) * 100, 0, 100);
     const threshPct = clamp(Number(threshold) * 100, 0, 100);
@@ -638,7 +662,7 @@ const PD_THRESHOLD_BY_GRADE = {
       chart.setOption(option, false);
     }
   }
-  // XAI 탭에 표시할 SHAP/Feature Importance 막대 차트를 갱신합니다.
+  // XAI ??�� ?�시??SHAP/Feature Importance 막�? 차트�?갱신?�니??
   function updateShapAndFI() {
     const shapItems = ensureItems(state.shap, DEFAULT_SHAP_ITEMS);
     const fiItems = ensureItems(state.fi, DEFAULT_FI_ITEMS);
@@ -651,19 +675,19 @@ const PD_THRESHOLD_BY_GRADE = {
     return name;
   }
 
-  // 재무비율 레이더 차트를 computeRatios 결과로 렌더링합니다.
+  // ?�무비율 ?�이??차트�?computeRatios 결과�??�더링합?�다.
   function updateRadar() {
     if (!charts.radar) return;
     const r = state.ratios;
     charts.radar.setOption({
       radar: {
         indicator: [
-          { name: '유동성', max: 3 },
-          { name: '당좌', max: 3 },
-          { name: '부채', max: 1 },
-          { name: '수익성', max: 0.4 },
+          { name: '?�동??, max: 3 },
+          { name: '?�좌', max: 3 },
+          { name: '부�?, max: 1 },
+          { name: '?�익??, max: 0.4 },
           { name: 'ROA', max: 0.2 },
-          { name: '매출총이익률', max: 0.6 },
+          { name: '매출총이?�률', max: 0.6 },
         ],
       },
       series: [
@@ -680,10 +704,10 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // 손익과 부채 추이를 선형 그래프로 그립니다; placeholder 비율을 조정해 흐름을 제어합니다.
+  // ?�익�?부�?추이�??�형 그래?�로 그립?�다; placeholder 비율??조정???�름???�어?�니??
   function updateTrend() {
     if (!charts.trend) return;
-    const years = ['2020', '2021', '2022', '2023', '현재'];
+    const years = ['2020', '2021', '2022', '2023', '?�재'];
     const sales = [0.7, 0.8, 0.9, 1.0, 1.0].map((ratio) => state.fin.netSales * ratio);
     const ebitSeries = [0.6, 0.75, 0.85, 1.0, 1.0].map((ratio) => state.fin.ebit * ratio);
     const niSeries = [0.5, 0.7, 0.85, 1.0, 1.0].map((ratio) => state.fin.netIncome * ratio);
@@ -691,31 +715,31 @@ const PD_THRESHOLD_BY_GRADE = {
 
     charts.trend.setOption({
       tooltip: { trigger: 'axis' },
-      legend: { data: ['매출', '영업이익', '순이익', '장기차입'] },
+      legend: { data: ['매출', '?�업?�익', '?�이??, '?�기차입'] },
       xAxis: { type: 'category', data: years },
       yAxis: { type: 'value' },
       series: [
         { name: '매출', type: 'line', smooth: true, data: sales },
-        { name: '영업이익', type: 'line', smooth: true, data: ebitSeries },
-        { name: '순이익', type: 'line', smooth: true, data: niSeries },
-        { name: '장기차입', type: 'line', smooth: true, data: debtSeries },
+        { name: '?�업?�익', type: 'line', smooth: true, data: ebitSeries },
+        { name: '?�이??, type: 'line', smooth: true, data: niSeries },
+        { name: '?�기차입', type: 'line', smooth: true, data: debtSeries },
       ],
     });
   }
 
-  // 동종업계 비교 산점도를 구성하며 좌표 축 범위는 여기에서 제어합니다.
+  // ?�종?�계 비교 ?�점?��? 구성?�며 좌표 �?범위???�기?�서 ?�어?�니??
   function updatePeer() {
     if (!charts.peer) return;
     const peerData = [
-      { name: '당사', value: [state.ratios.dar * 100, state.ratios.roa * 100, state.fin.netSales] },
-      { name: '업종 중위수', value: [55, 4.5, state.fin.netSales * 0.8] },
+      { name: '?�사', value: [state.ratios.dar * 100, state.ratios.roa * 100, state.fin.netSales] },
+      { name: '?�종 중위??, value: [55, 4.5, state.fin.netSales * 0.8] },
     ];
     charts.peer.setOption({
       tooltip: {
         trigger: 'item',
-        formatter: (params) => `${params.name}<br/>부채비율: ${params.value[0].toFixed(1)}%<br/>ROA: ${params.value[1].toFixed(2)}%<br/>매출: ${fmtAmount(params.value[2])}`,
+        formatter: (params) => `${params.name}<br/>부채비?? ${params.value[0].toFixed(1)}%<br/>ROA: ${params.value[1].toFixed(2)}%<br/>매출: ${fmtAmount(params.value[2])}`,
       },
-      xAxis: { name: '부채비율(%)', min: 0, max: 120 },
+      xAxis: { name: '부채비??%)', min: 0, max: 120 },
       yAxis: { name: 'ROA(%)', min: -5, max: 15 },
       series: [
         {
@@ -727,10 +751,10 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // 담보 집중도 히트맵; 현재는 무작위 데이터를 사용하므로 실제 LTV 데이터를 넣으려면 이 부분을 교체합니다.
+  // ?�보 집중???�트�? ?�재??무작???�이?��? ?�용?��?�??�제 LTV ?�이?��? ?�으?�면 ??부분을 교체?�니??
   function updateHeatmap() {
     if (!charts.heatmap) return;
-    const categories = ['그룹', '업종', '지역'];
+    const categories = ['그룹', '?�종', '지??];
     const buckets = ['Low', 'Mid', 'High'];
     const data = [];
     categories.forEach((cat, row) => {
@@ -761,7 +785,7 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // 메인 담보 섹션 리스트를 채우며 state.risk.collateral을 수정하면 즉시 반영됩니다.
+  // 메인 ?�보 ?�션 리스?��? 채우�?state.risk.collateral???�정?�면 즉시 반영?�니??
   function renderCollateral(collateral = []) {
     const data = ensureItems(collateral, DEFAULT_COLLATERAL_ITEMS);
     renderCollection('#collateralList', data, (item) => {
@@ -771,11 +795,11 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // 우측 감사 로그 카드에 모델 버전과 입력/시나리오 횟수를 표시합니다.
+  // ?�측 감사 로그 카드??모델 버전�??�력/?�나리오 ?�수�??�시?�니??
   function renderAuditInfo() {
     setText('#modelVersion', state.modelVersion || '-');
-    setText('#whatIfLog', `${state.counters.whatIf}건`);
-    setText('#inputHistory', `${state.counters.inputChanges}회`);
+    setText('#whatIfLog', `${state.counters.whatIf}�?);
+    setText('#inputHistory', `${state.counters.inputChanges}??);
   }
 
   function bumpInputCounter() {
@@ -783,7 +807,7 @@ const PD_THRESHOLD_BY_GRADE = {
     renderAuditInfo();
   }
 
-  // 우측 의사결정 근거 목록을 SHAP 상위 항목과 정책 플래그로 채웁니다.
+  // ?�측 ?�사결정 근거 목록??SHAP ?�위 ??���??�책 ?�래그로 채웁?�다.
   function updateDecisionEvidence() {
     const list = $('#decisionEvidence');
     if (!list) return;
@@ -806,13 +830,13 @@ const PD_THRESHOLD_BY_GRADE = {
       },
       () => {
         const li = document.createElement('li');
-        li.textContent = '근거 데이터가 없습니다.';
+        li.textContent = '근거 ?�이?��? ?�습?�다.';
         return li;
       },
     );
   }
 
-  // DART/모의 API 응답을 state에 주입하여 초기값과 모델 버전을 갱신합니다.
+  // DART/모의 API ?�답??state??주입?�여 초기값과 모델 버전??갱신?�니??
   function hydrateWithFetchedData(payload) {
     if (!payload) return;
     Object.assign(state.meta, payload.meta || {});
@@ -834,7 +858,7 @@ const PD_THRESHOLD_BY_GRADE = {
     updateDecisionEvidence();
   }
 
-  // 중앙/우측 차트 컨테이너를 ECharts로 초기화하고 창 크기 변화에 대응합니다.
+  // 중앙/?�측 차트 컨테?�너�?ECharts�?초기?�하�?�??�기 변?�에 ?�?�합?�다.
   function initCharts() {
     if (typeof echarts === 'undefined') return;
     charts.shap = echarts.init($('#shapBar'), null, { renderer: 'svg' });
@@ -852,7 +876,7 @@ const PD_THRESHOLD_BY_GRADE = {
     );
   }
 
-  // XAI 카드의 탭 버튼을 바인딩하여 해당 차트를 보여줍니다.
+  // XAI 카드????버튼??바인?�하???�당 차트�?보여줍니??
   function bindTabs() {
     const shapTab = $('#tabShap');
     const fiTab = $('#tabFI');
@@ -874,20 +898,20 @@ const PD_THRESHOLD_BY_GRADE = {
     });
   }
 
-  // 우측 sLLM 초안 입력창에 기본 문장을 채우고 근거 리스트를 초기화합니다.
+  // ?�측 sLLM 초안 ?�력창에 기본 문장??채우�?근거 리스?��? 초기?�합?�다.
   function initDecisionDraft() {
     const decisionDraft = $('#decisionDraft');
-    const initial = `조건부 승인 권고드리며, 권고 한도 ${fmtAmount(state.risk.limit)} / 권고 금리 ${state.risk.rate.toFixed(2)}% 적용을 제안합니다. 필수 약정: ${state.risk.covenants.join(', ')}.`;
+    const initial = `조건부 ?�인 권고?�리�? 권고 ?�도 ${fmtAmount(state.risk.limit)} / 권고 금리 ${state.risk.rate.toFixed(2)}% ?�용???�안?�니?? ?�수 ?�정: ${state.risk.covenants.join(', ')}.`;
     if (decisionDraft) decisionDraft.value = initial;
     updateDecisionEvidence();
   }
 
-  // TODO: 실제 API를 연결하면 이 모의 데이터 로더를 교체하세요.
+  // TODO: ?�제 API�??�결?�면 ??모의 ?�이??로더�?교체?�세??
   async function fetchCompanyMock() {
     await new Promise((resolve) => setTimeout(resolve, 300));
     return {
       meta: {
-        companyName: '예제전자',
+        companyName: '?�제?�자',
         regNo: '123-45-67890',
         industry: 'C26',
         fiscalYear: '2024',
@@ -913,7 +937,7 @@ const PD_THRESHOLD_BY_GRADE = {
     };
   }
 
-  // TODO: 실제 What-if API 응답 구조에 맞추어 교체할 임시 계산 로직입니다.
+  // TODO: ?�제 What-if API ?�답 구조??맞추??교체???�시 계산 로직?�니??
   async function postWhatIfMock(meta, scenario, fin, risk) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     const marginFactor = scenario.marginMode === 'npm' ? 0.0015 : 0.001;
@@ -929,9 +953,9 @@ const PD_THRESHOLD_BY_GRADE = {
     const rateNew = clamp(risk.rate + scenario.baseRateDelta * 0.4 - scenario.marginDelta * 0.03 + scenario.fxDelta * 0.01, 0.5, 20);
     const deltaLimit = limitNew - risk.limit;
     const summary = [
-      `PD 변화: ${(pdNew - risk.pd < 0 ? '' : '+')}${percentFormat.format((pdNew - risk.pd) * 100)}p`,
-      `등급 변화: ${gradeNew === risk.grade ? '변화 없음' : `${risk.grade} → ${gradeNew}`}`,
-      `권고 한도: ${deltaLimit === 0 ? '변화 없음' : `${deltaLimit > 0 ? '+' : ''}${fmtAmount(deltaLimit)}`}`,
+      `PD 변?? ${(pdNew - risk.pd < 0 ? '' : '+')}${percentFormat.format((pdNew - risk.pd) * 100)}p`,
+      `?�급 변?? ${gradeNew === risk.grade ? '변???�음' : `${risk.grade} ??${gradeNew}`}`,
+      `권고 ?�도: ${deltaLimit === 0 ? '변???�음' : `${deltaLimit > 0 ? '+' : ''}${fmtAmount(deltaLimit)}`}`,
     ];
     return {
       pd_new: pdNew,
@@ -942,7 +966,7 @@ const PD_THRESHOLD_BY_GRADE = {
     };
   }
 
-  // 초기 진입점: 차트를 만들고 입력/탭을 바인딩한 뒤 첫 렌더링을 실행합니다.
+  // 초기 진입?? 차트�?만들�??�력/??�� 바인?�한 ??�??�더링을 ?�행?�니??
   function init() {
     initCharts();
     bindInputs();
@@ -958,3 +982,13 @@ const PD_THRESHOLD_BY_GRADE = {
     init();
   }
 })();
+
+
+
+
+
+
+
+
+
+
