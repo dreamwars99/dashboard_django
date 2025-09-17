@@ -1,4 +1,4 @@
-﻿/* ===============================
+/* ===============================
   KB Dashboard Base Styles
   - 레이아웃, 카드, 입력 컴포넌트 정리
    =============================== */
@@ -129,100 +129,167 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 /* 7) 메인 요약 (게이지/등급/메트릭/What-if) */
 .kb-summary{
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1.3fr);
-  grid-template-rows: auto auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
   grid-template-areas:
-    'gauge metrics whatif'
-    'risk  risk    whatif';
+    'gauge whatif'
+    'metrics whatif'
+    'risk whatif';
   gap: var(--space-4);
   align-items: stretch;
 }
-.kb-summary__gauge{ grid-area: gauge; display: flex; flex-direction: column; gap: var(--space-2); position: relative; }
-.kb-grade-inline{ display: flex; align-items: flex-end; gap: 12px; }
-.kb-grade__value{
-  font-size: 48px;
-  font-weight: 900;
-  letter-spacing: .5px;
-  line-height: 1;
-  background: linear-gradient(180deg,#0b132b 0%,#2e74ff 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 1px 0 rgba(0,0,0,.06);
+.kb-summary__gauge{
+  grid-area: gauge;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--kb-border);
+  border-radius: var(--kb-radius);
+  background: #fff;
+  box-shadow: var(--kb-shadow);
+  position: relative;
 }
-.kb-grade--A{--grade:#198754}
-.kb-grade--B{--grade:#3aa1ff}
-.kb-grade--C{--grade:#ffc107}
-.kb-grade--D{--grade:#fd7e14}
-.kb-grade--E{--grade:#dc3545}
-.kb-grade__meta{ display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--kb-muted); }
-.kb-grade__decision{ font-weight: 700; }
-.kb-decision--approve{ color: var(--kb-green); }
-.kb-decision--hold{ color: var(--kb-amber); }
-.kb-decision--reject{ color: var(--kb-red); }
-.kb-summary__threshold{ font-size: 12px; color: var(--kb-muted); }
-.kb-threshold-row{ display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
-.kb-threshold-controls{ position: relative; display: flex; align-items: center; gap: 6px; }
-.kb-threshold-controls .kb-popover{ top: calc(100% + 6px); right: 0; }
-.kb-btn--xs{ padding: 5px 12px; font-size: 12px; line-height: 1.2; border-radius: 6px; }
-
+.kb-summary__header{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.kb-summary__title{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0b1f44;
+}
+.kb-summary__subtitle{
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0b1f44;
+}
+.kb-summary__hint{
+  font-size: 12px;
+  color: var(--kb-muted);
+}
 .kb-summary__metrics{
   grid-area: metrics;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-2);
-  border: 1px solid var(--kb-border);
-  border-radius: var(--kb-radius);
-  background: rgba(13,110,253,0.02);
-  box-shadow: inset 0 0 0 1px rgba(13,110,253,0.04);
-}
-.kb-metric{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-}
-.kb-metric__label{ color: var(--kb-muted); font-size: 13px; }
-.kb-metric__sub{ font-size: 11px; color: var(--kb-muted); font-weight: 400; }
-.kb-metric__value{ font-weight: 700; }
-.kb-metric__value--accent{ color: var(--kb-blue); }
-.kb-progress{ height: 10px; background: #f1f3f5; border-radius: 999px; overflow: hidden; border: 1px solid var(--kb-border); }
-.kb-progress__bar{ height: 100%; background: var(--kb-blue); }
-.kb-summary__metrics-top{ display: grid; gap: var(--space-2); }
-.kb-summary__metrics-bottom{ display: none; }
-.kb-summary__metrics-title{ margin: 0 0 var(--space-2); font-size: 15px; font-weight: 700; color: #0b1f44; }
-.kb-summary__risk{
-  grid-area: risk;
-  padding: var(--space-2);
+  padding: var(--space-3);
   border: 1px solid var(--kb-border);
   border-radius: var(--kb-radius);
   background: #fff;
   box-shadow: var(--kb-shadow);
+}
+.kb-summary__metrics-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.kb-summary__grade{
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  grid-column: 1 / -1;
 }
-.summary-risk{ min-height: 150px; }
-
+.kb-summary__grade-label{
+  font-size: 13px;
+  color: var(--kb-muted);
+}
+.kb-metric{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.kb-metric__label{
+  color: var(--kb-muted);
+  font-size: 13px;
+}
+.kb-metric__value{
+  font-weight: 700;
+}
+.kb-metric__value--accent{
+  color: var(--kb-blue);
+}
+.kb-progress{
+  height: 10px;
+  background: #f1f3f5;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--kb-border);
+}
+.kb-progress__bar{
+  height: 100%;
+  background: var(--kb-blue);
+}
+.summary-note{
+  margin: 0;
+  font-size: 12px;
+  color: var(--kb-muted);
+}
+.kb-summary__risk{
+  grid-area: risk;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--kb-border);
+  border-radius: var(--kb-radius);
+  background: #fff;
+  box-shadow: var(--kb-shadow);
+}
+.summary-risk{
+  min-height: 220px;
+}
 .kb-summary__whatif{
   grid-area: whatif;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
   border: 1px solid var(--kb-border);
   border-radius: var(--kb-radius);
   background: #fff;
   box-shadow: var(--kb-shadow);
 }
-.kb-summary__whatif-title{ margin: 0; font-size: 15px; font-weight: 700; }
-.whatif-stack{ display: flex; flex-direction: column; gap: var(--space-3); }
-.whatif-stack .whatif-ctrl{ border: 1px dashed var(--kb-border); border-radius: 10px; padding: var(--space-3); background: #fdfdfd; }
-.whatif-result--compact{ display: grid; gap: 10px; font-size: 13px; }
-.whatif-result--compact strong{ font-size: 16px; color: var(--kb-blue); }
-.whatif-result--compact .kb-progress{ height: 8px; }
+.kb-summary__whatif-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+.kb-summary__whatif-title{
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0b1f44;
+}
+.whatif-stack{
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.whatif-stack .whatif-ctrl{
+  border: 1px dashed var(--kb-border);
+  border-radius: 10px;
+  padding: var(--space-3);
+  background: #fdfdfd;
+}
+.whatif-result--compact{
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
+}
+.whatif-result--compact strong{
+  font-size: 16px;
+  color: var(--kb-blue);
+}
+.whatif-result--compact .kb-progress{
+  height: 8px;
+}
 
 /* 8) 차트 플레이스홀더 (추후 JS 교체) */
 .chart-placeholder{
@@ -315,7 +382,8 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
   .kb-panel--left { position: static; order: 1; }
   .kb-panel--center { order: 2; }
   .kb-summary { grid-template-columns: 1fr; grid-template-areas: 'gauge' 'metrics' 'risk' 'whatif'; }
-  .kb-summary__risk .chart-frame { min-height: 100px; }
+  .kb-summary__metrics-grid { grid-template-columns: minmax(0, 1fr); }
+  .kb-summary__risk .chart-frame { min-height: 160px; }
   .kb-trend-summary { grid-template-columns: 1fr; }
   .chart-frame--square { min-height: 260px; }
   .whatif-grid { grid-template-columns: 1fr; }
@@ -343,7 +411,6 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 .kb-popover__row{ display:flex; gap:8px; justify-content:flex-end; }
 
 /* 컨테이너 기준 위치 보정을 위해 게이지 섹션 패딩 튜닝 */
-.kb-summary__gauge{ position:relative; }
 
 /* 13) What-if 슬라이더 */
 .whatif-grid{
@@ -442,6 +509,8 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 .slider-group input[type="range"]{accent-color:var(--kb-blue);}
 
 @media (max-width:1100px){
+  .kb-summary{grid-template-columns:1fr;grid-template-areas:'gauge' 'metrics' 'risk' 'whatif';}
+  .kb-summary__metrics-grid{grid-template-columns:minmax(0,1fr);}
   .summary-layout{grid-template-columns:1fr;}
   .two-col-charts{grid-template-columns:1fr;}
 }
@@ -517,7 +586,7 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 #policyFlags .flag.info{background:#e7f5ff; border-color:#c7e0ff; color:#0b508d;}
 
 @media (max-width: 1100px){
-  .summary-strip__body{grid-template-columns:1fr;}
+  .kb-summary__risk .chart-frame{min-height:180px;}
   .collateral-layout{grid-template-columns:1fr;}
 }
 

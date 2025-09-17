@@ -146,90 +146,99 @@
 {% endblock %}
 
 {% block main %}
-  <section class="kb-card card summary-strip" aria-labelledby="summaryTitle">
-          <div class="summary-strip__header">
-            <h2 class="card__title" id="summaryTitle">기업 심사 요약</h2>
-            <span class="summary-hint">부도확률(PD) — 낮을수록 양호</span>
-          </div>
-          <div class="summary-strip__body">
-            <div class="summary-strip__gauge">
-              <div class="chart-frame chart-frame--gauge">
-                <!-- pdGauge 비주얼을 바꾸려면 index_cor.js의 updateGauge() 옵션을 수정하세요. -->
-              <div id="pdGauge" class="kb-chart" role="img" aria-label="부도확률(PD) 게이지"></div>
-              </div>
-            </div>
-            <div class="summary-strip__metrics">
-              <div class="grade-badge" id="gradeBadge">--</div>
-              <div class="summary-metrics">
-                <div class="metric">
-                  <span class="metric-label">권고 한도</span>
-                  <strong class="metric-value" id="summaryLimit">-</strong>
-                </div>
-                <div class="metric">
-                  <span class="metric-label">권고 금리</span>
-                  <strong class="metric-value" id="summaryRate">-</strong>
-                </div>
-                <div class="metric">
-                  <span class="metric-label">필수 약정</span>
-                  <strong class="metric-value" id="summaryCovenant">-</strong>
-                </div>
-              </div>
-              <p class="summary-note">권고 한도/금리는 내부 모델 결과로, 승인권자 검토가 필요합니다.</p>
-              <div class="policy-flags" id="policyFlags" aria-live="polite"></div>
-            </div>
-          </div>
-        </section>
+  <section class="kb-summary" aria-labelledby="summaryTitle">
+    <div class="kb-summary__gauge">
+      <header class="kb-summary__header">
+        <h2 class="kb-summary__title" id="summaryTitle">기업 심사 요약</h2>
+        <span class="kb-summary__hint">부도확률(PD) — 낮을수록 양호</span>
+      </header>
+      <div class="chart-frame chart-frame--gauge">
+        <div id="pdGauge" class="kb-chart" role="img" aria-label="부도확률(PD) 게이지"></div>
+      </div>
+    </div>
 
-  <section class="kb-card card" aria-labelledby="whatIfTitle">
-          <div class="card-header">
-            <h2 class="card__title" id="whatIfTitle">What-if 시나리오</h2>
-            <span class="hint">슬라이더 조정 시 0.3초 후 자동 반영</span>
-          </div>
-          <div class="whatif-controls">
-            <div class="whatif-row">
-              <label for="revDelta">매출 성장률 Δ%</label>
-              <input id="revDelta" type="range" min="-20" max="20" value="0" />
-              <span class="delta-chip" id="revDeltaVal">0%</span>
-            </div>
-            <div class="whatif-row with-toggle">
-              <div class="whatif-label-group">
-                <label for="marginDelta">마진 Δ%p</label>
-                <div class="toggle-tabs" role="tablist">
-                  <button type="button" class="toggle-tab active" id="marginModeGPM" data-mode="gpm">매출총이익률</button>
-                  <button type="button" class="toggle-tab" id="marginModeNPM" data-mode="npm">순이익률</button>
-                </div>
-              </div>
-              <input id="marginDelta" type="range" min="-10" max="10" value="0" />
-              <span class="delta-chip" id="marginDeltaVal">0%p</span>
-            </div>
-            <div class="whatif-row">
-              <label for="debtDelta">장기차입금 Δ(억원)</label>
-              <input id="debtDelta" type="range" min="-500" max="500" step="10" value="0" />
-              <span class="delta-chip" id="debtDeltaVal">0</span>
-            </div>
-            <div class="whatif-row">
-              <label for="mktDelta">시가총액 Δ%</label>
-              <input id="mktDelta" type="range" min="-20" max="20" value="0" />
-              <span class="delta-chip" id="mktDeltaVal">0%</span>
-            </div>
-            <div class="whatif-row optional">
-              <label for="fxDelta">환율 Δ%</label>
-              <input id="fxDelta" type="range" min="-15" max="15" value="0" />
-              <span class="delta-chip" id="fxDeltaVal">0%</span>
-            </div>
-            <div class="whatif-row optional">
-              <label for="baseRateDelta">기준금리 Δ%p</label>
-              <input id="baseRateDelta" type="range" min="-3" max="3" step="0.1" value="0" />
-              <span class="delta-chip" id="baseRateDeltaVal">0%p</span>
-            </div>
-          </div>
-          <div class="whatif-summary" id="whatIfSummary">
-            <span class="whatif-pill">PD 변화: 0%p</span>
-            <span class="whatif-pill">등급 변화: 0단계</span>
-            <span class="whatif-pill">권고 한도: 변화 없음</span>
-          </div>
-        </section>
+    <div class="kb-summary__metrics">
+      <div class="kb-summary__metrics-grid">
+        <div class="kb-summary__grade">
+          <span class="kb-summary__grade-label">신용 등급</span>
+          <div class="grade-badge" id="gradeBadge">--</div>
+        </div>
+        <div class="kb-metric">
+          <span class="kb-metric__label">권고 한도</span>
+          <strong class="kb-metric__value" id="summaryLimit">-</strong>
+        </div>
+        <div class="kb-metric">
+          <span class="kb-metric__label">권고 금리</span>
+          <strong class="kb-metric__value" id="summaryRate">-</strong>
+        </div>
+        <div class="kb-metric">
+          <span class="kb-metric__label">필수 약정</span>
+          <strong class="kb-metric__value" id="summaryCovenant">-</strong>
+        </div>
+      </div>
+      <p class="summary-note">권고 한도/금리는 내부 모델 결과로, 승인전 검토가 필요합니다.</p>
+      <div class="policy-flags" id="policyFlags" aria-live="polite"></div>
+    </div>
 
+    <div class="kb-summary__risk" aria-labelledby="riskSummaryTitle">
+      <header class="kb-summary__header">
+        <h3 class="kb-summary__subtitle" id="riskSummaryTitle">위험도 분석</h3>
+      </header>
+      <div class="chart-frame chart-frame--square summary-risk">
+        <div id="ratioRadar" class="kb-chart" role="img" aria-label="재무 비율 레이더 차트"></div>
+      </div>
+    </div>
+
+    <div class="kb-summary__whatif" aria-labelledby="whatIfTitle">
+      <div class="kb-summary__whatif-header">
+        <h3 class="kb-summary__whatif-title" id="whatIfTitle">What-if 시나리오</h3>
+        <span class="hint">슬라이더 조정 시 0.3초 후 자동 반영</span>
+      </div>
+      <div class="whatif-controls">
+        <div class="whatif-row">
+          <label for="revDelta">매출 성장률 Δ%</label>
+          <input id="revDelta" type="range" min="-20" max="20" value="0" />
+          <span class="delta-chip" id="revDeltaVal">0%</span>
+        </div>
+        <div class="whatif-row with-toggle">
+          <div class="whatif-label-group">
+            <label for="marginDelta">마진 Δ%p</label>
+            <div class="toggle-tabs" role="tablist">
+              <button type="button" class="toggle-tab active" id="marginModeGPM" data-mode="gpm">매출총이익률</button>
+              <button type="button" class="toggle-tab" id="marginModeNPM" data-mode="npm">순이익률</button>
+            </div>
+          </div>
+          <input id="marginDelta" type="range" min="-10" max="10" value="0" />
+          <span class="delta-chip" id="marginDeltaVal">0%p</span>
+        </div>
+        <div class="whatif-row">
+          <label for="debtDelta">장기차입금 Δ(억원)</label>
+          <input id="debtDelta" type="range" min="-500" max="500" step="10" value="0" />
+          <span class="delta-chip" id="debtDeltaVal">0</span>
+        </div>
+        <div class="whatif-row">
+          <label for="mktDelta">시가총액 Δ%</label>
+          <input id="mktDelta" type="range" min="-20" max="20" value="0" />
+          <span class="delta-chip" id="mktDeltaVal">0%</span>
+        </div>
+        <div class="whatif-row optional">
+          <label for="fxDelta">환율 Δ%</label>
+          <input id="fxDelta" type="range" min="-15" max="15" value="0" />
+          <span class="delta-chip" id="fxDeltaVal">0%</span>
+        </div>
+        <div class="whatif-row optional">
+          <label for="baseRateDelta">기준금리 Δ%p</label>
+          <input id="baseRateDelta" type="range" min="-3" max="3" step="0.1" value="0" />
+          <span class="delta-chip" id="baseRateDeltaVal">0%p</span>
+        </div>
+      </div>
+      <div class="whatif-summary" id="whatIfSummary">
+        <span class="whatif-pill">PD 변화: 0%p</span>
+        <span class="whatif-pill">등급 변화: 0단계</span>
+        <span class="whatif-pill">권고 한도: 변화 없음</span>
+      </div>
+    </div>
+  </section>
   <section class="kb-card card" aria-labelledby="xaiTitle">
           <div class="card-header">
             <h2 class="card__title" id="xaiTitle">설명 가능성 (XAI)</h2>
@@ -250,15 +259,12 @@
   <section class="kb-card card" aria-labelledby="financeSummaryTitle">
           <h2 class="card__title" id="financeSummaryTitle">재무 요약</h2>
           <div class="two-col-charts">
-            <div class="chart-frame chart-frame--square">
-              <div id="ratioRadar" class="kb-chart" role="img" aria-label="재무 비율 레이더 차트"></div>
-            </div>
             <div class="chart-frame chart-frame--wide">
               <div id="trendLine" class="kb-chart" role="img" aria-label="재무 추이 라인 차트"></div>
             </div>
-          </div>
-          <div class="chart-frame chart-frame--wide optional" id="peerFrame">
-            <div id="peerScatter" class="kb-chart" role="img" aria-label="업종 중위수 대비 포지션"></div>
+            <div class="chart-frame chart-frame--wide optional" id="peerFrame">
+              <div id="peerScatter" class="kb-chart" role="img" aria-label="업종 중위수 대비 포지션"></div>
+            </div>
           </div>
         </section>
 
