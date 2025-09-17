@@ -1,64 +1,46 @@
-# Byte-compiled / optimized / DLL files
+# Python cache and artifacts
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyo
 
-# Distribution / packaging
-.Python
+# Build outputs
 build/
-develop-eggs/
 dist/
-eggs/
 *.egg-info/
-.installed.cfg
-*.egg
+.eggs/
 
-# PyInstaller
-*.manifest
-*.spec
-
-# Unit test / coverage reports
-.coverage
-.tox/
-.nox/
-.pytest_cache/
-pytest-debug.log
-htmlcov/
-
-# Django / Flask
+# Django / project state
 *.log
-local_settings.py
-instance/
-.env
-.env.*
-
-# Databases (keep if version-controlled intentionally)
 *.sqlite3
-*.db
+media/
+staticfiles/
 
 # Virtual environments
+.env
+.env.*
 venv/
 .venv/
-ENV/
 env/
+dashboard_env/
 
-# IDE / Editor
-.idea/
-.vscode/
-*.code-workspace
+# Testing / tooling caches
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# Node / frontend
+# Node / JS
 node_modules/
-*.tsbuildinfo
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# OS files
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS artifacts
 .DS_Store
 Thumbs.db
-
-# Misc
-*.bak
-*.swp
-dashboard_env/

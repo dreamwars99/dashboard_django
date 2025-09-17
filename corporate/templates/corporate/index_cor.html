@@ -2,7 +2,7 @@
 {% extends 'ui/base.html' %}
 {% load static %}
 
-{% block title %}KB 기업 ?�신 ?�사 ?�?�보??% endblock %}
+{% block title %}KB 기업 여신 심사 대시보드{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'corporate/styles_cor.css' %}">
@@ -14,165 +14,155 @@
 
 {% block header %}
   <div class="kb-header__titles">
-    <h1 class="kb-header__title">AI 기반 기업 ?�신 ?�사 ?�보보드</h1>
-    <p class="kb-header__subtitle">법인 차주 분석 · 권고 ?�도 · ?�규 근거�????�면?�서</p>
+    <h1 class="kb-header__title">AI 기반 기업 여신 심사 정보보드</h1>
+    <p class="kb-header__subtitle">법인 차주 분석 · 권고 한도 · 내규 근거를 한 화면에서</p>
   </div>
 {% endblock %}
 
 {% block left_panel %}
   <div class="kb-card-stack">
-    <!-- ?�사 메�??�이???�력: 값�? state.meta???�?�되???�약 ?�역�??�측 로그??반영?�니?? -->
+    <!-- 회사 메타데이터 입력: 값은 state.meta에 저장되어 요약 영역과 우측 로그에 반영됩니다. -->
           <section class="kb-card card" aria-labelledby="basicInfoTitle">
-            <h2 class="card__title" id="basicInfoTitle">기업 기본?�보</h2>
+            <h2 class="card__title" id="basicInfoTitle">기업 기본정보</h2>
             <div class="kb-form">
               <div class="form-group with-tooltip">
-                <label class="form-label" for="companyName">?�사�?/label>
-                <input id="companyName" type="text" class="form-input" placeholder="?? KB?�크?? />
+                <label class="form-label" for="companyName">회사명</label>
+                <input id="companyName" type="text" class="form-input" placeholder="예: KB테크㈜" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="regNo">?�업?�등록번??/ 종목코드</label>
-                <input id="regNo" type="text" class="form-input" placeholder="?? 123-45-67890" />
+                <label class="form-label" for="regNo">사업자등록번호 / 종목코드</label>
+                <input id="regNo" type="text" class="form-input" placeholder="예: 123-45-67890" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="industry">?�종(KSIC)</label>
-                <input id="industry" type="text" class="form-input" placeholder="?? C26 ?�자부?? />
+                <label class="form-label" for="industry">업종(KSIC)</label>
+                <input id="industry" type="text" class="form-input" placeholder="예: C26 전자부품" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="fiscalYear">?�계?�도</label>
+                <label class="form-label" for="fiscalYear">회계연도</label>
                 <select id="fiscalYear" class="form-select">
-                  <option value="">?�도 ?�택</option>
+                  <option value="">연도 선택</option>
                   <option>2022</option>
                   <option>2023</option>
                   <option>2024</option>
                 </select>
               </div>
               <div class="form-actions">
-                <button id="btnFetchData" type="button" class="kb-btn kb-btn--ghost" aria-label="DART ?�는 ?�내 DB?�서 불러?�기">DART/?�내 DB 불러?�기</button>
+                <button id="btnFetchData" type="button" class="kb-btn kb-btn--ghost" aria-label="DART 또는 사내 DB에서 불러오기">DART/사내 DB 불러오기</button>
               </div>
             </div>
           </section>
 
-          <!-- ?�무 ?�치 ?�력: ?�자�?조정?�면 bindInputs()가 state.fin??갱신?�고 recalcAndRender()가 중앙 ?�각?��? ?�시 계산?�니?? -->
+          <!-- 재무 수치 입력: 숫자를 조정하면 bindInputs()가 state.fin을 갱신하고 recalcAndRender()가 중앙 시각화를 다시 계산합니다. -->
           <section class="kb-card card" aria-labelledby="financeInputTitle">
-            <h2 class="card__title" id="financeInputTitle">?�심 ?�무 ?�력</h2>
+            <h2 class="card__title" id="financeInputTitle">핵심 재무 입력</h2>
             <div class="form-section">
-              <h3 class="form-section__title">매출 · ?�익</h3>
+              <h3 class="form-section__title">매출 · 손익</h3>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="netSales">매출??Net sales) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원 · ?�수 ?�력 금�?">??/span>
-                <input id="netSales" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 5200" />
+                <label class="form-label" for="netSales">매출액(Net sales) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원 · 음수 입력 금지">ⓘ</span>
+                <input id="netSales" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 5200" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="cogs">매출?��?(COGS) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?��???매출?�을 초과?????�습?�다">??/span>
-                <input id="cogs" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 3600" />
+                <label class="form-label" for="cogs">매출원가(COGS) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="원가는 매출액을 초과할 수 없습니다">ⓘ</span>
+                <input id="cogs" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 3600" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="da">감�??�각�?Depreciation &amp; amortization) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원 · ?�수 ?�력 금�?">??/span>
-                <input id="da" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 210" />
+                <label class="form-label" for="da">감가상각비(Depreciation &amp; amortization) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원 · 음수 입력 금지">ⓘ</span>
+                <input id="da" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 210" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="ebit">?�업?�익(EBIT) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원">??/span>
-                <input id="ebit" type="number" inputmode="decimal" class="form-input" placeholder="?? 430" />
+                <label class="form-label" for="ebit">영업이익(EBIT) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원">ⓘ</span>
+                <input id="ebit" type="number" inputmode="decimal" class="form-input" placeholder="예: 430" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="netIncome">?�기?�이??Net Income) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원">??/span>
-                <input id="netIncome" type="number" inputmode="decimal" class="form-input" placeholder="?? 270" />
+                <label class="form-label" for="netIncome">당기순이익(Net Income) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원">ⓘ</span>
+                <input id="netIncome" type="number" inputmode="decimal" class="form-input" placeholder="예: 270" />
               </div>
             </div>
 
             <div class="form-section">
-              <h3 class="form-section__title">?�산 · 부�?/h3>
+              <h3 class="form-section__title">자산 · 부채</h3>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="inventory">?�고?�산(Inventory) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원 · ?�수 ?�력 금�?">??/span>
-                <input id="inventory" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 620" />
+                <label class="form-label" for="inventory">재고자산(Inventory) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원 · 음수 입력 금지">ⓘ</span>
+                <input id="inventory" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 620" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="receivables">매출채권(Total Receivables) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원">??/span>
-                <input id="receivables" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 830" />
+                <label class="form-label" for="receivables">매출채권(Total Receivables) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원">ⓘ</span>
+                <input id="receivables" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 830" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="currentAssets">?�동?�산(Current assets) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원">??/span>
-                <input id="currentAssets" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 3100" />
+                <label class="form-label" for="currentAssets">유동자산(Current assets) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원">ⓘ</span>
+                <input id="currentAssets" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 3100" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="currentLiab">?�동부�?Total Current Liabilities) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원">??/span>
-                <input id="currentLiab" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 1850" />
+                <label class="form-label" for="currentLiab">유동부채(Total Current Liabilities) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원">ⓘ</span>
+                <input id="currentLiab" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 1850" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="ltDebt">?�기차입�?Total Long-term debt) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원 · ?�수 ?�력 금�?">??/span>
-                <input id="ltDebt" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 1150" />
+                <label class="form-label" for="ltDebt">장기차입금(Total Long-term debt) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원 · 음수 입력 금지">ⓘ</span>
+                <input id="ltDebt" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 1150" />
               </div>
             </div>
 
             <div class="form-section">
-              <h3 class="form-section__title">?�본 · 기�?</h3>
+              <h3 class="form-section__title">자본 · 기타</h3>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="retainedEarnings">?�익?�여�?Retained Earnings) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�위???�원">??/span>
-                <input id="retainedEarnings" type="number" inputmode="decimal" class="form-input" placeholder="?? 950" />
+                <label class="form-label" for="retainedEarnings">이익잉여금(Retained Earnings) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="단위는 억원">ⓘ</span>
+                <input id="retainedEarnings" type="number" inputmode="decimal" class="form-input" placeholder="예: 950" />
               </div>
               <div class="form-group with-tooltip">
-                <label class="form-label" for="mktValue">?��?총액(Market value) <span class="unit">(?�원)</span></label>
-                <span class="form-tooltip" data-tooltip="?�장?� ?�동 집계 · 비상?��? ?�기 ?�력">??/span>
-                <input id="mktValue" type="number" min="0" inputmode="decimal" class="form-input" placeholder="?? 15200" />
+                <label class="form-label" for="mktValue">시가총액(Market value) <span class="unit">(억원)</span></label>
+                <span class="form-tooltip" data-tooltip="상장은 자동 집계 · 비상장은 수기 입력">ⓘ</span>
+                <input id="mktValue" type="number" min="0" inputmode="decimal" class="form-input" placeholder="예: 15200" />
               </div>
             </div>
           </section>
 
           <section class="kb-card card" aria-labelledby="autoCalcTitle">
-            <h2 class="card__title" id="autoCalcTitle">?�동 계산</h2>
+            <h2 class="card__title" id="autoCalcTitle">자동 계산</h2>
             <div class="kv-list autos">
-              <div class="kv"><span>매출총이??Gross Profit)</span><strong id="gp">-</strong><span class="badge-auto">?�동 계산??/span></div>
-              <div class="kv"><span>매출총이?�률(Gross Profit Margin)</span><strong id="gpm">-</strong><span class="metric-badge" data-metric="gpm">-</span></div>
-              <div class="kv"><span>?�이?�률(Net Profit Margin)</span><strong id="npm">-</strong><span class="metric-badge" data-metric="npm">-</span></div>
-              <div class="kv"><span>?�동비율(Current Ratio)</span><strong id="cr">-</strong><span class="metric-badge" data-metric="cr">-</span></div>
-              <div class="kv"><span>?�좌비율(Quick Ratio)</span><strong id="qr">-</strong><span class="metric-badge" data-metric="qr">-</span></div>
-              <div class="kv"><span>부�??�산비율(Debt to Asset Ratio)</span><strong id="dar">-</strong><span class="metric-badge" data-metric="dar">-</span></div>
-              <div class="kv"><span>총자?�이?�률(ROA)</span><strong id="roa">-</strong><span class="metric-badge" data-metric="roa">-</span></div>
-              <div class="kv"><span>?�트�?Z-Score</span><strong id="altman">-</strong><span class="metric-badge" data-metric="altman">-</span></div>
-              <div class="kv"><span>?�슨 O-Score</span><strong id="olson">-</strong><span class="metric-badge" data-metric="olson">-</span></div>
+              <div class="kv"><span>매출총이익(Gross Profit)</span><strong id="gp">-</strong><span class="badge-auto">자동 계산됨</span></div>
+              <div class="kv"><span>매출총이익률(Gross Profit Margin)</span><strong id="gpm">-</strong><span class="metric-badge" data-metric="gpm">-</span></div>
+              <div class="kv"><span>순이익률(Net Profit Margin)</span><strong id="npm">-</strong><span class="metric-badge" data-metric="npm">-</span></div>
+              <div class="kv"><span>유동비율(Current Ratio)</span><strong id="cr">-</strong><span class="metric-badge" data-metric="cr">-</span></div>
+              <div class="kv"><span>당좌비율(Quick Ratio)</span><strong id="qr">-</strong><span class="metric-badge" data-metric="qr">-</span></div>
+              <div class="kv"><span>부채/자산비율(Debt to Asset Ratio)</span><strong id="dar">-</strong><span class="metric-badge" data-metric="dar">-</span></div>
+              <div class="kv"><span>총자산이익률(ROA)</span><strong id="roa">-</strong><span class="metric-badge" data-metric="roa">-</span></div>
+              <div class="kv"><span>알트만 Z-Score</span><strong id="altman">-</strong><span class="metric-badge" data-metric="altman">-</span></div>
+              <div class="kv"><span>올슨 O-Score</span><strong id="olson">-</strong><span class="metric-badge" data-metric="olson">-</span></div>
             </div>
           </section>
   </div>
 {% endblock %}
 
-{% block main %}
-  <section class="corp-main-grid">
-    <section class="kb-card card summary-strip corp-area--gauge" aria-labelledby="summaryTitle">
+{% block main %}
+  <section class="kb-card card summary-strip" aria-labelledby="summaryTitle">
           <div class="summary-strip__header">
-            <h2 class="card__title" id="summaryTitle">기업 ?�사 ?�약</h2>
-            <span class="summary-hint">부?�확�?PD) ????��?�록 ?�호</span>
+            <h2 class="card__title" id="summaryTitle">기업 심사 요약</h2>
+            <span class="summary-hint">부도확률(PD) — 낮을수록 양호</span>
           </div>
           <div class="summary-strip__body">
-            <div class="summary-strip__gauge">
-              <div class="chart-frame chart-frame--gauge" id="corpGaugeWrap">
-                <div id="summaryGauge" style="width: 100%; height: 220px;"></div>
-                <div id="summaryGrade" class="kb-meta"></div>
-                <div id="summaryThreshold" class="kb-meta"></div>
-              </div>
-            </div>
-            <div class="summary-strip__metrics">
-              <div class="grade-badge" id="gradeBadge">--</div>
-              <div id="amountBox" class="kb-amount-box">
-                <div class="kb-amount-box__row">
-                  <span>?�청 금액</span><strong id="askedAmountText">??</strong>
-                </div>
-                <div class="kb-amount-box__row">
-                  <span>AI 추천 ?�도</span><strong id="aiLimitText">??</strong>
-                </div>
+            <div class="summary-strip__gauge">
+              <div class="chart-frame chart-frame--gauge">
+                <!-- pdGauge 비주얼을 바꾸려면 index_cor.js의 updateGauge() 옵션을 수정하세요. -->
+              <div id="pdGauge" class="kb-chart" role="img" aria-label="부도확률(PD) 게이지"></div>
               </div>
+            </div>
+            <div class="summary-strip__metrics">
+              <div class="grade-badge" id="gradeBadge">--</div>
               <div class="summary-metrics">
                 <div class="metric">
-                  <span class="metric-label">권고 ?�도</span>
+                  <span class="metric-label">권고 한도</span>
                   <strong class="metric-value" id="summaryLimit">-</strong>
                 </div>
                 <div class="metric">
@@ -180,123 +170,110 @@
                   <strong class="metric-value" id="summaryRate">-</strong>
                 </div>
                 <div class="metric">
-                  <span class="metric-label">?�수 ?�정</span>
+                  <span class="metric-label">필수 약정</span>
                   <strong class="metric-value" id="summaryCovenant">-</strong>
                 </div>
               </div>
-              <p class="summary-note">권고 ?�도/금리???��? 모델 결과�? ?�인권자 검?��? ?�요?�니??</p>
+              <p class="summary-note">권고 한도/금리는 내부 모델 결과로, 승인권자 검토가 필요합니다.</p>
               <div class="policy-flags" id="policyFlags" aria-live="polite"></div>
             </div>
           </div>
-        </section>
-    <section class="kb-card card corp-area--whatif" aria-labelledby="whatIfTitle">
+        </section>
+
+  <section class="kb-card card" aria-labelledby="whatIfTitle">
           <div class="card-header">
-            <h2 class="card__title" id="whatIfTitle">What-if ?�나리오</h2>
-            <span class="hint">?�라?�더 조정 ??0.3�????�동 반영</span>
+            <h2 class="card__title" id="whatIfTitle">What-if 시나리오</h2>
+            <span class="hint">슬라이더 조정 시 0.3초 후 자동 반영</span>
           </div>
-      <div id="whatIfPanel">
-        <div class="whatif-controls">
+          <div class="whatif-controls">
             <div class="whatif-row">
-              <label for="revDelta">매출 ?�장�??%</label>
+              <label for="revDelta">매출 성장률 Δ%</label>
               <input id="revDelta" type="range" min="-20" max="20" value="0" />
               <span class="delta-chip" id="revDeltaVal">0%</span>
             </div>
             <div class="whatif-row with-toggle">
               <div class="whatif-label-group">
-                <label for="marginDelta">마진 ?%p</label>
+                <label for="marginDelta">마진 Δ%p</label>
                 <div class="toggle-tabs" role="tablist">
-                  <button type="button" class="toggle-tab active" id="marginModeGPM" data-mode="gpm">매출총이?�률</button>
-                  <button type="button" class="toggle-tab" id="marginModeNPM" data-mode="npm">?�이?�률</button>
+                  <button type="button" class="toggle-tab active" id="marginModeGPM" data-mode="gpm">매출총이익률</button>
+                  <button type="button" class="toggle-tab" id="marginModeNPM" data-mode="npm">순이익률</button>
                 </div>
               </div>
               <input id="marginDelta" type="range" min="-10" max="10" value="0" />
               <span class="delta-chip" id="marginDeltaVal">0%p</span>
             </div>
             <div class="whatif-row">
-              <label for="debtDelta">?�기차입�??(?�원)</label>
+              <label for="debtDelta">장기차입금 Δ(억원)</label>
               <input id="debtDelta" type="range" min="-500" max="500" step="10" value="0" />
               <span class="delta-chip" id="debtDeltaVal">0</span>
             </div>
             <div class="whatif-row">
-              <label for="mktDelta">?��?총액 ?%</label>
+              <label for="mktDelta">시가총액 Δ%</label>
               <input id="mktDelta" type="range" min="-20" max="20" value="0" />
               <span class="delta-chip" id="mktDeltaVal">0%</span>
             </div>
             <div class="whatif-row optional">
-              <label for="fxDelta">?�율 ?%</label>
+              <label for="fxDelta">환율 Δ%</label>
               <input id="fxDelta" type="range" min="-15" max="15" value="0" />
               <span class="delta-chip" id="fxDeltaVal">0%</span>
             </div>
             <div class="whatif-row optional">
-              <label for="baseRateDelta">기�?금리 ?%p</label>
+              <label for="baseRateDelta">기준금리 Δ%p</label>
               <input id="baseRateDelta" type="range" min="-3" max="3" step="0.1" value="0" />
               <span class="delta-chip" id="baseRateDeltaVal">0%p</span>
             </div>
           </div>
           <div class="whatif-summary" id="whatIfSummary">
-            <span class="whatif-pill">PD 변?? 0%p</span>
-            <span class="whatif-pill">?�급 변?? 0?�계</span>
-            <span class="whatif-pill">권고 ?�도: 변???�음</span>
+            <span class="whatif-pill">PD 변화: 0%p</span>
+            <span class="whatif-pill">등급 변화: 0단계</span>
+            <span class="whatif-pill">권고 한도: 변화 없음</span>
           </div>
-      </div>
-    </section>
-    <article class="card corp-area--risk">
-      <h3 class="card__title">?�� 기업 ?�험???�무 기반)</h3>
-      <div id="summaryRiskRadar" style="width: 100%; height: 280px;"></div>
-    </article>
-  </section>
-  <section class="corp-financial-row">
-    <article class="card">
-      <h3 class="card__title">?�무 ?�약</h3>
-      <ul id="corpFinancialSummary" class="kb-list" role="list"></ul>
-    </article>
-  </section>
-
+        </section>
 
   <section class="kb-card card" aria-labelledby="xaiTitle">
           <div class="card-header">
-            <h2 class="card__title" id="xaiTitle">?�명 가?�성 (XAI)</h2>
+            <h2 class="card__title" id="xaiTitle">설명 가능성 (XAI)</h2>
             <div class="tabs" role="tablist">
-              <button id="tabShap" type="button" class="tab active" role="tab" aria-controls="shapBar" aria-selected="true">SHAP ?�인</button>
+              <button id="tabShap" type="button" class="tab active" role="tab" aria-controls="shapBar" aria-selected="true">SHAP 요인</button>
               <button id="tabFI" type="button" class="tab" role="tab" aria-controls="fiChart" aria-selected="false">Feature Importance</button>
             </div>
           </div>
           <div class="chart-frame chart-frame--wide" id="shapWrap">
-            <div id="shapBar" class="kb-chart" role="img" aria-label="SHAP Top-K 막�? 차트"></div>
+            <div id="shapBar" class="kb-chart" role="img" aria-label="SHAP Top-K 막대 차트"></div>
           </div>
           <div class="chart-frame chart-frame--wide" id="fiWrap" style="display:none;">
-            <div id="fiChart" class="kb-chart" role="img" aria-label="Feature Importance 막�? 차트"></div>
+            <div id="fiChart" class="kb-chart" role="img" aria-label="Feature Importance 막대 차트"></div>
           </div>
-          <p class="hint">SHAP: 기업�??�향??/ Feature Importance: ?�역 중요??/p>
+          <p class="hint">SHAP: 기업별 영향도 / Feature Importance: 전역 중요도</p>
         </section>
 
   <section class="kb-card card" aria-labelledby="financeSummaryTitle">
-          <h2 class="card__title" id="financeSummaryTitle">?�무 ?�약</h2>
+          <h2 class="card__title" id="financeSummaryTitle">재무 요약</h2>
           <div class="two-col-charts">
             <div class="chart-frame chart-frame--square">
-              <div id="ratioRadar" class="kb-chart" role="img" aria-label="?�무 비율 ?�이??차트"></div>
+              <div id="ratioRadar" class="kb-chart" role="img" aria-label="재무 비율 레이더 차트"></div>
             </div>
             <div class="chart-frame chart-frame--wide">
-              <div id="trendLine" class="kb-chart" role="img" aria-label="?�무 추이 ?�인 차트"></div>
+              <div id="trendLine" class="kb-chart" role="img" aria-label="재무 추이 라인 차트"></div>
             </div>
           </div>
           <div class="chart-frame chart-frame--wide optional" id="peerFrame">
-            <div id="peerScatter" class="kb-chart" role="img" aria-label="?�종 중위???��??��???></div>
+            <div id="peerScatter" class="kb-chart" role="img" aria-label="업종 중위수 대비 포지션"></div>
           </div>
         </section>
 
   <section class="kb-card card" aria-labelledby="collateralTitle">
-          <h2 class="card__title" id="collateralTitle">?�보 · 집중??/h2>
+          <h2 class="card__title" id="collateralTitle">담보 · 집중도</h2>
           <div class="collateral-layout">
             <div class="collateral-card">
-              <h3>?�보 ?�황</h3>
+              <h3>담보 현황</h3>
               <ul class="collateral-list" id="collateralList">
-                <li>?�보 ?�보�?불러?�면 종류/?��?가�?LTV가 ?�시?�니??</li>
+                <li>담보 정보를 불러오면 종류/평가가치/LTV가 표시됩니다.</li>
               </ul>
-              <p class="hint">±10% 민감??분석 결과???�께 ?�공?�니??</p>
+              <p class="hint">±10% 민감도 분석 결과도 함께 제공합니다.</p>
             </div>
             <div class="chart-frame chart-frame--wide">
-              <div id="concentrationHeatmap" class="kb-chart" role="img" aria-label="집중???�트�?></div>
+              <div id="concentrationHeatmap" class="kb-chart" role="img" aria-label="집중도 히트맵"></div>
             </div>
           </div>
         </section>
@@ -305,5 +282,3 @@
 {% block right_panel %}
   {% include 'ui/right_panel.html' with panel=panel %}
 {% endblock %}
-
-

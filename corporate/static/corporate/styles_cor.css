@@ -522,27 +522,3 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
 }
 
 .toast--info{background:#212529;}
-
-/* ㄱ자 메인 레이아웃 컨테이너 */
-.corp-main-grid {
-  display: grid;
-  grid-template-columns: 2fr 1.4fr;
-  grid-template-rows: auto auto;
-  grid-template-areas:
-    "gauge whatif"
-    "risk  whatif";
-  gap: 16px;
-}
-
-/* 그리드 슬롯 (HTML에서 붙일 클래스) */
-.corp-area--gauge { grid-area: gauge; }
-.corp-area--whatif { grid-area: whatif; }
-.corp-area--risk  { grid-area: risk; }
-
-/* ㄱ자 아래 ‘재무 요약’ 줄 */
-.corp-financial-row { margin-top: 16px; }
-
-/* 게이지 옆 금액 박스용 (톤만 맞춤) */
-.kb-amount-box { padding:12px; border-radius:12px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.06); }
-.kb-amount-box__row { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.kb-meta { font-size:.9rem; color:#667085; }
