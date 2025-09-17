@@ -1,0 +1,133 @@
+﻿{% load static %}
+{% if panel.variant == 'corporate' %}
+<section class="kb-card kb-card--panel" aria-labelledby="decisionDraftTitle">
+  <h2 class="kb-card__title" id="decisionDraftTitle">결정 초안 (sLLM)</h2>
+  <label class="form-label" for="decisionStatus">결정 상태</label>
+  <select id="decisionStatus" class="form-select">
+    <option value="approve">승인</option>
+    <option value="conditional" selected>조건부</option>
+    <option value="reject">거절</option>
+  </select>
+  <label class="form-label" for="decisionDraft">초안 본문</label>
+  <textarea id="decisionDraft" class="form-textarea" rows="6" placeholder="권고 한도, 금리, 조건 등을 기재하세요."></textarea>
+  <div class="decision-evidence">
+    <h3>근거</h3>
+    <ul id="decisionEvidence" class="evidence-list">
+      {% if panel.evidence %}
+        {% for item in panel.evidence %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      {% else %}
+        <li>상단 XAI 분석 결과를 참조해 근거를 작성하세요.</li>
+      {% endif %}
+    </ul>
+  </div>
+</section>
+
+<section class="kb-card kb-card--panel" aria-labelledby="ragTitle">
+  <h2 class="kb-card__title" id="ragTitle">규정 · RAG 근거</h2>
+  <ul class="rag-list" id="policySnippets">
+    {% if panel.policy_snippets %}
+      {% for snippet in panel.policy_snippets %}
+        <li>{{ snippet }}</li>
+      {% endfor %}
+    {% else %}
+      <li>내규·법규 스니펫을 불러오면 아래에 표시됩니다.</li>
+    {% endif %}
+  </ul>
+  <button type="button" class="kb-btn kb-btn--ghost kb-btn--sm">원문 보기 (보안 뷰어)</button>
+</section>
+
+<section class="kb-card kb-card--panel" aria-labelledby="docChecklistTitle">
+  <h2 class="kb-card__title" id="docChecklistTitle">문서 체크리스트</h2>
+  <ul class="kb-checklist" id="docChecklist">
+    {% if panel.checklist %}
+      {% for item in panel.checklist %}
+        <li>
+          <span>{{ item.label }}</span>
+          <span class="status status--{{ item.status|default:'ok' }}">{{ item.status_label|default:item.status }}</span>
+        </li>
+      {% endfor %}
+    {% else %}
+      <li><span>재무제표</span><span class="status status--ok">완료</span></li>
+      <li><span>사업보고서</span><span class="status status--warn">보완</span></li>
+      <li><span>담보평가</span><span class="status status--missing">미제출</span></li>
+      <li><span>재무자료</span><span class="status status--ok">완료</span></li>
+    {% endif %}
+  </ul>
+</section>
+
+<section class="kb-card kb-card--panel" aria-labelledby="auditLogTitle">
+  <h2 class="kb-card__title" id="auditLogTitle">감사 로그</h2>
+  <div class="kb-kv">
+    <div class="kb-kv__row"><span>모델 버전</span><strong id="modelVersion">{{ panel.audit.model|default:'-' }}</strong></div>
+    <div class="kb-kv__row"><span>What-if 기록</span><strong id="whatIfLog">{{ panel.audit.what_if|default:'0건' }}</strong></div>
+    <div class="kb-kv__row"><span>입력 변경</span><strong id="inputHistory">{{ panel.audit.inputs|default:'0건' }}</strong></div>
+  </div>
+</section>
+{% else %}
+<section class="kb-card kb-card--panel" id="docChecklist" aria-label="필수 서류 체크">
+  <h2 class="kb-card__title">필수 서류 체크</h2>
+  <ul class="kb-checklist" id="docChecklistList" role="list">
+    {% if panel.checklist %}
+      {% for item in panel.checklist %}
+        <li>
+          <span>{{ item.label }}</span>
+          <span class="status status--{{ item.status|default:'ok' }}">{{ item.status_label|default:item.status }}</span>
+        </li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+</section>
+
+<section class="kb-card kb-card--panel">
+  <div class="kb-report-header">
+    <h2 class="kb-card__title">제출된 보고서</h2>
+    <button type="button" class="kb-btn kb-btn--primary kb-btn--sm" aria-label="보고서 작성">보고서 작성</button>
+  </div>
+  <ul class="kb-list" role="list">
+    {% if panel.reports %}
+      {% for report in panel.reports %}
+        <li class="kb-list__item">
+          <span class="kb-list__file">{{ report.name }}</span>
+          <span class="kb-list__meta">{{ report.meta }}</span>
+          <button class="kb-icon-btn" aria-label="다운로드">⬇️</button>
+        </li>
+      {% endfor %}
+    {% else %}
+      <li class="kb-list__item">
+        <span class="kb-list__file">김민수_심사보고서.pdf</span>
+        <span class="kb-list__meta">2025-08-26 10:30</span>
+        <button class="kb-icon-btn" aria-label="다운로드">⬇️</button>
+      </li>
+      <li class="kb-list__item">
+        <span class="kb-list__file">박서진_심사보고서.pdf</span>
+        <span class="kb-list__meta">2025-08-26 09:15</span>
+        <button class="kb-icon-btn" aria-label="다운로드">⬇️</button>
+      </li>
+    {% endif %}
+  </ul>
+</section>
+
+<section class="kb-card kb-card--panel">
+  <h2 class="kb-card__title">AI 감사 로그 요약</h2>
+  <div class="kb-kv">
+    <div class="kb-kv__row">
+      <span>모델</span>
+      <strong>{{ panel.audit.model|default:'Qwen2.5-7B (리콜)' }}</strong>
+    </div>
+    <div class="kb-kv__row">
+      <span>버전</span>
+      <strong>{{ panel.audit.version|default:'v1.3.2' }}</strong>
+    </div>
+    <div class="kb-kv__row">
+      <span>위험 임계치</span>
+      <strong>{{ panel.audit.threshold|default:'0.42' }}</strong>
+    </div>
+    <div class="kb-kv__row">
+      <span>최종 업데이트</span>
+      <strong>{{ panel.audit.updated_at|default:'2025-09-14T10:30' }}</strong>
+    </div>
+  </div>
+</section>
+{% endif %}
