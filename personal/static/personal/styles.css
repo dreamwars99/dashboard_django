@@ -407,3 +407,7 @@ body { margin: 0; font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe U
     overscroll-behavior: contain;
   }
 }
+/* 라벨 아래에 슬라이더, 그 아래 값 입력 줄 배치 */
+.kb-field { display: flex; flex-direction: column; gap: 6px; }
+.kb-row   { display: flex; align-items: center; justify-content: space-between; }
+.kb-row input[type="number"] { width: 90px; }

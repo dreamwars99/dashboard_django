@@ -71,6 +71,28 @@ function debounce(fn, wait = 250) {
   };
 }
 
+// 1) 슬라이더(range)와 숫자(number) 양방향 동기화 유틸
+function bindRangeAndNumber(rangeEl, numberEl, onChange) {
+  // -- 슬라이더 → 숫자
+  rangeEl.addEventListener('input', () => {
+    numberEl.value = rangeEl.value;            // 같은 단위(%)로 보관
+    onChange?.(Number(rangeEl.value));         // 변경 콜백으로 외부 업데이트
+  });
+
+  // -- 숫자 → 슬라이더 (유효성 체크 + 클램프)
+  numberEl.addEventListener('input', () => {
+    const min = Number(numberEl.min ?? rangeEl.min ?? 0);
+    const max = Number(numberEl.max ?? rangeEl.max ?? 100);
+    let v = Number(numberEl.value);
+    if (Number.isNaN(v)) return;               // 비숫자 입력 중엔 무시
+    v = Math.min(max, Math.max(min, v));       // 범위 강제
+    numberEl.value = v.toFixed(2);             // 표시 포맷(필요시 조정)
+    rangeEl.value = numberEl.value;            // 슬라이더도 이동
+    onChange?.(v);
+  });
+}
+
+
 /**
  * @description ECharts 인스턴스를 생성하거나 반환한다.
  * @param {string} domId - 대상 요소 ID.
@@ -728,12 +750,12 @@ function estimateProbability(params) {
  * @param {string} initial.grade - 기본 등급.
  */
 function initWhatIfPanel(initial) {
-  const rateEl = document.getElementById('wiRate');
+  const rateEl = document.getElementById('wi_rate_range');
+  const rateNumberEl = document.getElementById('wi_rate_input');
   const termEl = document.getElementById('wiTerm');
   const amountEl = document.getElementById('wiAmount');
   const incomeEl = document.getElementById('wiIncome');
   const outputs = {
-    rate: document.getElementById('wiRateOut'),
     term: document.getElementById('wiTermOut'),
     amount: document.getElementById('wiAmountOut'),
     income: document.getElementById('wiIncomeOut'),
@@ -741,7 +763,7 @@ function initWhatIfPanel(initial) {
     progress: document.getElementById('wiProgress'),
   };
 
-  if (!rateEl || !termEl || !amountEl || !incomeEl) return;
+  if (!rateEl || !rateNumberEl || !termEl || !amountEl || !incomeEl) return;
   if (Object.values(outputs).some(function (el) { return !el; })) return;
 
   const defaults = {
@@ -752,12 +774,13 @@ function initWhatIfPanel(initial) {
   };
 
   rateEl.value = String(defaults.rate);
+  rateNumberEl.value = Number(defaults.rate).toFixed(2);
   termEl.value = String(defaults.term);
   amountEl.value = String(defaults.amount);
   incomeEl.value = String(defaults.income);
 
   const syncOutputs = function () {
-    outputs.rate.textContent = Number(rateEl.value).toFixed(1) + '%';
+    rateNumberEl.value = Number(rateEl.value || 0).toFixed(2);
     outputs.term.textContent = termEl.value + '개월';
     outputs.amount.textContent = formatKRWThousandUnit(Number(amountEl.value));
     outputs.income.textContent = formatKRWThousandUnit(Number(incomeEl.value));
@@ -784,7 +807,12 @@ function initWhatIfPanel(initial) {
   state.whatif.recalculate = recalc;
   const debouncedRecalc = debounce(recalc, 250);
 
-  [rateEl, termEl, amountEl, incomeEl].forEach(function (input) {
+  bindRangeAndNumber(rateEl, rateNumberEl, function () {
+    syncOutputs();
+    debouncedRecalc();
+  });
+
+  [termEl, amountEl, incomeEl].forEach(function (input) {
     input.addEventListener('input', function () {
       syncOutputs();
       debouncedRecalc();
