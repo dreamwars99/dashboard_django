@@ -196,40 +196,59 @@
       </div>
       <div class="whatif-controls">
         <div class="whatif-row">
-          <label for="revDelta">매출 성장률 Δ%</label>
-          <input id="revDelta" type="range" min="-20" max="20" value="0" />
-          <span class="delta-chip" id="revDeltaVal">0%</span>
+          <div style="grid-column: 1 / span 3; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <label for="revDelta">매출 성장률 Δ%</label>
+            <span class="delta-chip" id="revDeltaVal">0%</span>
+          </div>
+          <input id="revDelta" type="range" min="0" max="20" step="1" value="0" list="revDeltaTicks" style="grid-column: 1 / span 3;" />
+          <datalist id="revDeltaTicks">
+            <option value="0">0%</option>
+            <option value="5">5%</option>
+            <option value="10">10%</option>
+            <option value="15">15%</option>
+            <option value="20">20%</option>
+          </datalist>
+        </div>
+        <div class="whatif-row">
+          <div style="grid-column: 1 / span 3; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <label for="debtDelta">장기차입금 Δ(억원)</label>
+            <span class="delta-chip" id="debtDeltaVal">0</span>
+          </div>
+          <input id="debtDelta" type="range" min="-500" max="500" step="10" value="0" style="grid-column: 1 / span 3;" />
+        </div>
+        <div class="whatif-row">
+          <div style="grid-column: 1 / span 3; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <label for="mktDelta">시가총액 Δ%</label>
+            <span class="delta-chip" id="mktDeltaVal">0%</span>
+          </div>
+          <input id="mktDelta" type="range" min="-20" max="20" value="0" style="grid-column: 1 / span 3;" />
+        </div>
+        <div class="whatif-row optional">
+          <div style="grid-column: 1 / span 3; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <label for="fxDelta">환율 Δ%</label>
+            <span class="delta-chip" id="fxDeltaVal">0%</span>
+          </div>
+          <input id="fxDelta" type="range" min="-15" max="15" value="0" style="grid-column: 1 / span 3;" />
+        </div>
+        <div class="whatif-row optional">
+          <div style="grid-column: 1 / span 3; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <label for="baseRateDelta">기준금리 Δ%p</label>
+            <span class="delta-chip" id="baseRateDeltaVal">0%p</span>
+          </div>
+          <input id="baseRateDelta" type="range" min="-3" max="3" step="0.1" value="0" style="grid-column: 1 / span 3;" />
         </div>
         <div class="whatif-row with-toggle">
-          <div class="whatif-label-group">
-            <label for="marginDelta">마진 Δ%p</label>
-            <div class="toggle-tabs" role="tablist">
-              <button type="button" class="toggle-tab active" id="marginModeGPM" data-mode="gpm">매출총이익률</button>
-              <button type="button" class="toggle-tab" id="marginModeNPM" data-mode="npm">순이익률</button>
+          <div style="grid-column: 1 / span 3; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+            <div class="whatif-label-group">
+              <label for="marginDelta">마진 Δ%p</label>
+              <div class="toggle-tabs" role="tablist">
+                <button type="button" class="toggle-tab active" id="marginModeGPM" data-mode="gpm">매출총이익률</button>
+                <button type="button" class="toggle-tab" id="marginModeNPM" data-mode="npm">순이익률</button>
+              </div>
             </div>
+            <span class="delta-chip" id="marginDeltaVal">0%p</span>
           </div>
-          <input id="marginDelta" type="range" min="-10" max="10" value="0" />
-          <span class="delta-chip" id="marginDeltaVal">0%p</span>
-        </div>
-        <div class="whatif-row">
-          <label for="debtDelta">장기차입금 Δ(억원)</label>
-          <input id="debtDelta" type="range" min="-500" max="500" step="10" value="0" />
-          <span class="delta-chip" id="debtDeltaVal">0</span>
-        </div>
-        <div class="whatif-row">
-          <label for="mktDelta">시가총액 Δ%</label>
-          <input id="mktDelta" type="range" min="-20" max="20" value="0" />
-          <span class="delta-chip" id="mktDeltaVal">0%</span>
-        </div>
-        <div class="whatif-row optional">
-          <label for="fxDelta">환율 Δ%</label>
-          <input id="fxDelta" type="range" min="-15" max="15" value="0" />
-          <span class="delta-chip" id="fxDeltaVal">0%</span>
-        </div>
-        <div class="whatif-row optional">
-          <label for="baseRateDelta">기준금리 Δ%p</label>
-          <input id="baseRateDelta" type="range" min="-3" max="3" step="0.1" value="0" />
-          <span class="delta-chip" id="baseRateDeltaVal">0%p</span>
+          <input id="marginDelta" type="range" min="-10" max="10" value="0" style="grid-column: 1 / span 3;" />
         </div>
       </div>
       <div class="whatif-summary" id="whatIfSummary">
