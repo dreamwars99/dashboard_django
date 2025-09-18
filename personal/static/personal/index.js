@@ -219,24 +219,38 @@ function getDecisionMeta(pHat, theta) {
  * @param {string} params.grade - 신용 등급.
  */
 function updateSummary(params) {
-  const gradeEl = document.querySelector('.kb-grade__value');
-  const gradeWrap = gradeEl ? gradeEl.parentElement : null;
+  const gradeBadge = document.getElementById('gradeBadge');
   const decisionEl = document.getElementById('decisionText');
   const reqEl = document.getElementById('reqLimit');
   const recEl = document.getElementById('recLimit');
   const progressEl = document.getElementById('summaryProgressBar');
 
-  if (gradeEl) gradeEl.textContent = params.grade;
-  if (gradeWrap) {
-    gradeWrap.classList.remove('kb-grade--A', 'kb-grade--B', 'kb-grade--C', 'kb-grade--D', 'kb-grade--E');
-    gradeWrap.classList.add('kb-grade--' + params.grade);
+  if (gradeBadge) {
+    const grade = params.grade || '--';
+    const map = {
+      A: 'grade--a',
+      'A-': 'grade--a',
+      'A+': 'grade--a',
+      B: 'grade--b',
+      'B+': 'grade--b',
+      'B-': 'grade--b',
+      C: 'grade--c',
+      'C+': 'grade--c',
+      'C-': 'grade--c',
+      D: 'grade--d',
+      'D+': 'grade--d',
+      'D-': 'grade--d',
+    };
+    gradeBadge.textContent = grade;
+    gradeBadge.classList.remove('grade--a', 'grade--b', 'grade--c', 'grade--d', 'grade--unknown');
+    gradeBadge.classList.add(map[grade] || 'grade--unknown');
   }
 
   if (decisionEl) {
     const meta = getDecisionMeta(params.pHat, params.theta);
     decisionEl.textContent = meta.text;
-    decisionEl.classList.remove('kb-decision--approve', 'kb-decision--hold', 'kb-decision--reject');
-    decisionEl.classList.add('kb-decision--' + meta.tone);
+    decisionEl.classList.remove('decision-pill--approve', 'decision-pill--hold', 'decision-pill--reject');
+    decisionEl.classList.add('decision-pill--' + meta.tone);
   }
 
   if (reqEl) reqEl.textContent = formatKRW(params.reqAmount);
@@ -248,6 +262,8 @@ function updateSummary(params) {
     progressEl.style.width = percent + '%';
     progressEl.setAttribute('aria-valuenow', String(percent));
   }
+
+  setThetaLabel(params.theta);
 }
 
 /**
